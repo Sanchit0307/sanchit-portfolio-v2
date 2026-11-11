@@ -110,3 +110,4 @@ export const VERIFIED_EDUCATION: EducationItem[] = [
     location: 'Paschim Vihar, New Delhi',
   },
 ];
+
