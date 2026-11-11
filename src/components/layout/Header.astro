@@ -6,27 +6,27 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
 ---
 
 <header class="w-full border-b border-[var(--color-border)] bg-[var(--bg-page)]/80 backdrop-blur-sm sticky top-0 z-40 transition-colors">
-  <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+  <div class="max-w-[1340px] mx-auto px-6 sm:px-8 lg:px-12 h-16 sm:h-20 flex items-center justify-between">
     <!-- Brand Mark -->
     <a
       href="/"
-      class="text-base font-semibold tracking-tight text-[var(--color-primary)] hover:opacity-80 transition-opacity focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded"
+      class="text-base sm:text-lg font-semibold tracking-tight text-[var(--color-primary)] hover:opacity-80 transition-opacity focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded"
       aria-label="Home - Sanchit Marwah"
     >
       {PERSONAL_INFO.initials}
     </a>
 
     <!-- Desktop Navigation -->
-    <nav class="hidden md:flex items-center gap-8" aria-label="Main Navigation">
+    <nav class="hidden md:flex items-center gap-7 lg:gap-9" aria-label="Main Navigation">
       {NAV_ITEMS.map((item) => {
         const isActive = pathname === item.href;
         return (
           <a
             href={item.href}
             class:list={[
-              'text-sm transition-colors py-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded',
+              'text-sm transition-colors py-1.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded',
               isActive
-                ? 'font-medium text-[var(--color-primary)]'
+                ? 'font-medium text-[var(--color-primary)] border-b border-[var(--color-primary)]'
                 : 'text-[var(--color-secondary)] hover:text-[var(--color-primary)]'
             ]}
             aria-current={isActive ? 'page' : undefined}
@@ -90,7 +90,7 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
           <a
             href={item.href}
             class:list={[
-              'text-sm py-1.5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded',
+              'text-sm py-2 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded',
               isActive
                 ? 'font-medium text-[var(--color-primary)]'
                 : 'text-[var(--color-secondary)] hover:text-[var(--color-primary)]'
@@ -121,4 +121,3 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
     });
   }
 </script>
-

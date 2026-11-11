@@ -23,6 +23,30 @@ interface UserProfile {
   bio: string | null;
 }
 
+interface ContributionDay {
+  date: string;
+  contributionCount: number;
+  color: string;
+  weekday: number;
+}
+
+interface ContributionWeek {
+  contributionDays: ContributionDay[];
+}
+
+interface ContributionMonth {
+  name: string;
+  year: number;
+  firstDay: string;
+  totalWeeks: number;
+}
+
+interface ContributionCalendar {
+  totalContributions: number;
+  weeks: ContributionWeek[];
+  months: ContributionMonth[];
+}
+
 export default function GithubDashboard() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [repos, setRepos] = useState<Repo[]>([]);
@@ -32,20 +56,28 @@ export default function GithubDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Contributions state
+  const [calendar, setCalendar] = useState<ContributionCalendar | null>(null);
+  const [contributionsConfigured, setContributionsConfigured] = useState<boolean | null>(null);
+  const [contributionsError, setContributionsError] = useState<string | null>(null);
+  const [hoveredDay, setHoveredDay] = useState<{ date: string; count: number } | null>(null);
+
   useEffect(() => {
-    async function fetchGithubData() {
-      const cacheKey = 'gh_data_Sanchit0307_v1';
+    async function fetchDashboardData() {
+      const cacheKey = 'gh_data_Sanchit0307_v2';
       const cached = sessionStorage.getItem(cacheKey);
 
       if (cached) {
         try {
           const parsed = JSON.parse(cached);
-          if (Date.now() - parsed.timestamp < 1000 * 60 * 10) {
+          if (Date.now() - parsed.timestamp < 1000 * 60 * 15) {
             setProfile(parsed.profile);
             setRepos(parsed.repos);
             setLanguages(parsed.languages);
             setTotalStars(parsed.totalStars);
             setTotalForks(parsed.totalForks);
+            setCalendar(parsed.calendar);
+            setContributionsConfigured(parsed.contributionsConfigured);
             setLoading(false);
             return;
           }
@@ -55,13 +87,15 @@ export default function GithubDashboard() {
       }
 
       try {
-        const [userRes, reposRes] = await Promise.all([
+        // Fetch Public GitHub REST data & Server Contributions API in parallel
+        const [userRes, reposRes, contribRes] = await Promise.all([
           fetch('https://api.github.com/users/Sanchit0307', {
             headers: { Accept: 'application/vnd.github.v3+json' },
           }),
           fetch('https://api.github.com/users/Sanchit0307/repos?sort=updated&per_page=30', {
             headers: { Accept: 'application/vnd.github.v3+json' },
           }),
+          fetch('/api/contributions.json'),
         ]);
 
         if (userRes.status === 403 || reposRes.status === 403) {
@@ -74,6 +108,21 @@ export default function GithubDashboard() {
 
         const userData: UserProfile = await userRes.json();
         const reposData: Repo[] = await reposRes.json();
+
+        // Parse contribution response
+        let calendarData: ContributionCalendar | null = null;
+        let isConfigured = false;
+        if (contribRes.ok) {
+          const contribJson = await contribRes.json();
+          if (contribJson.configured && contribJson.calendar) {
+            calendarData = contribJson.calendar;
+            isConfigured = true;
+          } else if (contribJson.configured === false) {
+            isConfigured = false;
+          } else if (contribJson.error) {
+            setContributionsError(contribJson.error);
+          }
+        }
 
         // Calculate language distribution
         const langCounts: Record<string, number> = {};
@@ -103,8 +152,10 @@ export default function GithubDashboard() {
         setLanguages(langArray);
         setTotalStars(stars);
         setTotalForks(forks);
+        setCalendar(calendarData);
+        setContributionsConfigured(isConfigured);
 
-        // Cache response in session storage
+        // Cache in session storage
         sessionStorage.setItem(
           cacheKey,
           JSON.stringify({
@@ -114,34 +165,49 @@ export default function GithubDashboard() {
             languages: langArray,
             totalStars: stars,
             totalForks: forks,
+            calendar: calendarData,
+            contributionsConfigured: isConfigured,
           })
         );
       } catch (err: any) {
-        setError(err.message || 'Unable to fetch GitHub information.');
+        setError(err.message || 'Unable to fetch engineering data.');
       } finally {
         setLoading(false);
       }
     }
 
-    fetchGithubData();
+    fetchDashboardData();
   }, []);
+
+  const getIntensityClass = (count: number) => {
+    if (count === 0) return 'bg-[var(--color-muted)] dark:bg-[#18181b] border border-[var(--color-border)]/50';
+    if (count <= 2) return 'bg-[#9be9a8] dark:bg-[#0e4429]';
+    if (count <= 5) return 'bg-[#40c463] dark:bg-[#006d32]';
+    if (count <= 9) return 'bg-[#30a14e] dark:bg-[#26a641]';
+    return 'bg-[#216e39] dark:bg-[#39d353]';
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  };
 
   if (loading) {
     return (
       <div className="space-y-8 animate-pulse">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-24 rounded-xl border border-[var(--color-border)] bg-[var(--color-muted)]" />
+            <div key={i} className="h-28 rounded-2xl border border-[var(--color-border)] bg-[var(--color-muted)]" />
           ))}
         </div>
-        <div className="h-48 rounded-xl border border-[var(--color-border)] bg-[var(--color-muted)]" />
-        <div className="space-y-4">
-          <div className="h-6 w-48 rounded bg-[var(--color-muted)]" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-32 rounded-xl border border-[var(--color-border)] bg-[var(--color-muted)]" />
-            ))}
-          </div>
+        <div className="h-64 rounded-2xl border border-[var(--color-border)] bg-[var(--color-muted)]" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="h-40 rounded-2xl border border-[var(--color-border)] bg-[var(--color-muted)]" />
+          ))}
         </div>
       </div>
     );
@@ -149,12 +215,12 @@ export default function GithubDashboard() {
 
   if (error) {
     return (
-      <div className="p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] space-y-4">
+      <div className="p-8 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] space-y-4 max-w-2xl">
         <div className="flex items-center gap-2 text-sm font-medium text-[var(--color-primary)]">
-          <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+          <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
           <span>GitHub API Notice</span>
         </div>
-        <p className="text-xs sm:text-sm text-[var(--color-secondary)] leading-relaxed">
+        <p className="text-sm text-[var(--color-secondary)] leading-relaxed">
           {error}
         </p>
         <div className="pt-2">
@@ -173,45 +239,187 @@ export default function GithubDashboard() {
   }
 
   return (
-    <div className="space-y-12 animate-fade-in">
-      {/* Section A: Overview Stats */}
+    <div className="space-y-12 sm:space-y-16 animate-fade-in">
+      {/* Section A: Overview Metrics */}
       <section className="space-y-4">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs">
-            <span className="text-xs text-[var(--color-secondary)] font-mono block">Public Repos</span>
-            <span className="text-2xl sm:text-3xl font-medium tracking-tight text-[var(--color-primary)] mt-1 block">
-              {profile?.public_repos || repos.length}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs hover:border-[var(--color-primary)]/30 transition-colors">
+            <span className="text-xs text-[var(--color-secondary)] font-mono block">Public Repositories</span>
+            <span className="text-3xl sm:text-4xl font-normal tracking-tight text-[var(--color-primary)] mt-1.5 block">
+              {profile?.public_repos ?? repos.length}
             </span>
           </div>
 
-          <div className="p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs">
+          <div className="p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs hover:border-[var(--color-primary)]/30 transition-colors">
             <span className="text-xs text-[var(--color-secondary)] font-mono block">Total Stars</span>
-            <span className="text-2xl sm:text-3xl font-medium tracking-tight text-[var(--color-primary)] mt-1 block">
+            <span className="text-3xl sm:text-4xl font-normal tracking-tight text-[var(--color-primary)] mt-1.5 block">
               {totalStars}
             </span>
           </div>
 
-          <div className="p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs">
+          <div className="p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs hover:border-[var(--color-primary)]/30 transition-colors">
             <span className="text-xs text-[var(--color-secondary)] font-mono block">Total Forks</span>
-            <span className="text-2xl sm:text-3xl font-medium tracking-tight text-[var(--color-primary)] mt-1 block">
+            <span className="text-3xl sm:text-4xl font-normal tracking-tight text-[var(--color-primary)] mt-1.5 block">
               {totalForks}
             </span>
           </div>
 
-          <div className="p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs">
-            <span className="text-xs text-[var(--color-secondary)] font-mono block">Languages</span>
-            <span className="text-2xl sm:text-3xl font-medium tracking-tight text-[var(--color-primary)] mt-1 block">
+          <div className="p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs hover:border-[var(--color-primary)]/30 transition-colors">
+            <span className="text-xs text-[var(--color-secondary)] font-mono block">Languages Used</span>
+            <span className="text-3xl sm:text-4xl font-normal tracking-tight text-[var(--color-primary)] mt-1.5 block">
               {languages.length}
             </span>
           </div>
         </div>
       </section>
 
+      {/* Section B: Genuine GitHub Contribution Heatmap */}
+      <section className="p-6 sm:p-8 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--color-border)]">
+          <div className="space-y-1">
+            <h2 className="text-base sm:text-lg font-normal tracking-tight text-[var(--color-primary)] flex items-center gap-2">
+              <span>Contribution Activity</span>
+              {calendar && (
+                <span className="chip text-[11px] font-mono px-2.5 py-0.5">
+                  {calendar.totalContributions} contributions in the last 12 months
+                </span>
+              )}
+            </h2>
+            <p className="text-xs text-[var(--color-secondary)]">
+              Refreshed periodically via official GitHub GraphQL API.
+            </p>
+          </div>
+
+          <a
+            href="https://github.com/Sanchit0307"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-secondary text-xs shrink-0 self-start sm:self-auto"
+          >
+            <span>GitHub Profile</span>
+            <span className="text-[10px]">↗</span>
+          </a>
+        </div>
+
+        {contributionsConfigured && calendar ? (
+          <div className="space-y-4">
+            {/* Heatmap Tooltip readout */}
+            <div className="h-5 text-xs font-mono text-[var(--color-secondary)] flex items-center justify-between">
+              <span>
+                {hoveredDay ? (
+                  <strong className="text-[var(--color-primary)]">
+                    {hoveredDay.count} contribution{hoveredDay.count === 1 ? '' : 's'} on {formatDate(hoveredDay.date)}
+                  </strong>
+                ) : (
+                  'Hover over any day to inspect contribution counts.'
+                )}
+              </span>
+
+              {/* Legend */}
+              <div className="hidden sm:flex items-center gap-1.5 text-[11px]">
+                <span>Less</span>
+                <span className="w-3 h-3 rounded-[2px] bg-[var(--color-muted)] dark:bg-[#18181b] border border-[var(--color-border)]/50" />
+                <span className="w-3 h-3 rounded-[2px] bg-[#9be9a8] dark:bg-[#0e4429]" />
+                <span className="w-3 h-3 rounded-[2px] bg-[#40c463] dark:bg-[#006d32]" />
+                <span className="w-3 h-3 rounded-[2px] bg-[#30a14e] dark:bg-[#26a641]" />
+                <span className="w-3 h-3 rounded-[2px] bg-[#216e39] dark:bg-[#39d353]" />
+                <span>More</span>
+              </div>
+            </div>
+
+            {/* Scrollable Heatmap Grid */}
+            <div className="overflow-x-auto pb-3 pt-1">
+              <div className="min-w-[760px] select-none">
+                {/* Month labels */}
+                <div className="flex text-[11px] font-mono text-[var(--color-secondary)] pl-8 mb-1.5 gap-[12px]">
+                  {calendar.months.map((m, idx) => (
+                    <span key={idx} style={{ width: `${Math.max(m.totalWeeks * 14, 28)}px` }} className="truncate">
+                      {m.name}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Day Grid with Weekday Labels */}
+                <div className="flex gap-1 items-start">
+                  {/* Weekday indicators (Mon, Wed, Fri) */}
+                  <div className="flex flex-col gap-1 pr-2 text-[10px] font-mono text-[var(--color-secondary)]/70 text-right w-6 shrink-0">
+                    <span className="h-3 leading-3 mt-[16px]">Mon</span>
+                    <span className="h-3 leading-3 mt-[8px]">Wed</span>
+                    <span className="h-3 leading-3 mt-[8px]">Fri</span>
+                  </div>
+
+                  {/* 53 Columns of Weeks */}
+                  <div className="flex gap-[3.5px]">
+                    {calendar.weeks.map((week, wIdx) => (
+                      <div key={wIdx} className="flex flex-col gap-[3.5px]">
+                        {week.contributionDays.map((day, dIdx) => (
+                          <div
+                            key={dIdx}
+                            onMouseEnter={() => setHoveredDay({ date: day.date, count: day.contributionCount })}
+                            onMouseLeave={() => setHoveredDay(null)}
+                            title={`${day.contributionCount} contributions on ${formatDate(day.date)}`}
+                            className={`w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-[2px] cursor-pointer transition-transform hover:scale-125 ${getIntensityClass(
+                              day.contributionCount
+                            )}`}
+                          />
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* Clear Setup Instructions if no token configured */
+          <div className="p-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-muted)] space-y-4">
+            <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-[var(--color-primary)]">
+              <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+              <span>GitHub Contribution Graph — Server-Side Setup</span>
+            </div>
+            <p className="text-xs sm:text-sm text-[var(--color-secondary)] leading-relaxed max-w-3xl">
+              To render genuine live contribution calendar data over the last 12 months, the GitHub GraphQL API requires an authenticated server-side token.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono pt-1">
+              <div className="p-3.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] space-y-1.5">
+                <span className="font-semibold text-[var(--color-primary)] block">Local Development (.env.local)</span>
+                <code className="text-[11px] block text-[var(--color-secondary)] select-all">
+                  GITHUB_TOKEN=ghp_yourPersonalAccessToken
+                </code>
+              </div>
+
+              <div className="p-3.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] space-y-1.5">
+                <span className="font-semibold text-[var(--color-primary)] block">Production (Vercel)</span>
+                <span className="text-[11px] text-[var(--color-secondary)] block">
+                  Project Settings &gt; Environment Variables &gt; Add GITHUB_TOKEN
+                </span>
+              </div>
+            </div>
+
+            <div className="pt-2 flex items-center justify-between">
+              <a
+                href="https://github.com/Sanchit0307"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary text-xs"
+              >
+                <span>View Contribution Activity on GitHub</span>
+                <span className="text-[10px]">↗</span>
+              </a>
+              <span className="text-[11px] text-[var(--color-secondary)] font-mono">
+                No simulated data substituted
+              </span>
+            </div>
+          </div>
+        )}
+      </section>
+
       {/* Section C: Language Distribution */}
       {languages.length > 0 && (
-        <section className="space-y-4 p-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs">
+        <section className="space-y-5 p-6 sm:p-8 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-medium text-[var(--color-primary)]">
+            <h2 className="text-base font-normal tracking-tight text-[var(--color-primary)]">
               Language Distribution
             </h2>
             <span className="text-xs font-mono text-[var(--color-secondary)]">
@@ -220,7 +428,7 @@ export default function GithubDashboard() {
           </div>
 
           {/* Stacked Bar */}
-          <div className="w-full h-2.5 rounded-full overflow-hidden flex bg-[var(--color-muted)]">
+          <div className="w-full h-3 rounded-full overflow-hidden flex bg-[var(--color-muted)]">
             {languages.map((l, i) => {
               const colors = ['#3178C6', '#F7DF1E', '#E34F26', '#3572A5', '#61DAFB', '#5FA04E'];
               const color = colors[i % colors.length];
@@ -236,15 +444,15 @@ export default function GithubDashboard() {
           </div>
 
           {/* Legend */}
-          <div className="flex flex-wrap gap-4 pt-2 text-xs">
+          <div className="flex flex-wrap gap-5 pt-1 text-xs">
             {languages.map((l, i) => {
               const colors = ['#3178C6', '#F7DF1E', '#E34F26', '#3572A5', '#61DAFB', '#5FA04E'];
               const color = colors[i % colors.length];
               return (
-                <div key={l.name} className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
+                <div key={l.name} className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
                   <span className="text-[var(--color-primary)] font-medium">{l.name}</span>
-                  <span className="text-[var(--color-secondary)] font-mono text-[11px]">{l.percentage}%</span>
+                  <span className="text-[var(--color-secondary)] font-mono text-xs">{l.percentage}%</span>
                 </div>
               );
             })}
@@ -252,12 +460,17 @@ export default function GithubDashboard() {
         </section>
       )}
 
-      {/* Section B: Recently Updated Repositories */}
-      <section className="space-y-4">
-        <div className="flex items-center justify-between pb-2">
-          <h2 className="text-base font-medium text-[var(--color-primary)]">
-            Recently Updated Repositories
-          </h2>
+      {/* Section D: Recently Updated Repositories (3 Columns on Desktop) */}
+      <section className="space-y-6">
+        <div className="flex items-center justify-between pb-2 border-b border-[var(--color-border)]">
+          <div>
+            <h2 className="text-lg font-normal tracking-tight text-[var(--color-primary)]">
+              Featured Public Repositories
+            </h2>
+            <p className="text-xs text-[var(--color-secondary)] mt-0.5">
+              Live repository metrics synchronized via GitHub API.
+            </p>
+          </div>
           <a
             href="https://github.com/Sanchit0307?tab=repositories"
             target="_blank"
@@ -269,32 +482,34 @@ export default function GithubDashboard() {
           </a>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {repos.slice(0, 6).map((repo) => (
             <a
               key={repo.id}
               href={repo.html_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group block p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-primary)]/40 transition-all shadow-2xs"
+              className="group block p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-primary)]/40 transition-all shadow-2xs flex flex-col justify-between"
             >
-              <div className="flex items-start justify-between gap-2">
-                <span className="text-sm font-medium text-[var(--color-primary)] group-hover:underline truncate">
-                  {repo.name}
-                </span>
-                <span className="text-xs text-[var(--color-secondary)] group-hover:text-[var(--color-primary)] transition-colors shrink-0">
-                  ↗
-                </span>
+              <div>
+                <div className="flex items-start justify-between gap-2">
+                  <span className="text-sm font-medium text-[var(--color-primary)] group-hover:underline truncate">
+                    {repo.name}
+                  </span>
+                  <span className="text-xs text-[var(--color-secondary)] group-hover:text-[var(--color-primary)] transition-colors shrink-0">
+                    ↗
+                  </span>
+                </div>
+
+                <p className="text-xs text-[var(--color-secondary)] mt-2.5 line-clamp-2 min-h-[2rem] leading-relaxed">
+                  {repo.description || 'Public GitHub repository by Sanchit Marwah.'}
+                </p>
               </div>
 
-              <p className="text-xs text-[var(--color-secondary)] mt-2 line-clamp-2 min-h-[2rem] leading-relaxed">
-                {repo.description || 'Public GitHub repository by Sanchit Marwah.'}
-              </p>
-
-              <div className="flex items-center justify-between text-[11px] text-[var(--color-secondary)] font-mono mt-4 pt-3 border-t border-[var(--color-border)]/60">
+              <div className="flex items-center justify-between text-[11px] text-[var(--color-secondary)] font-mono mt-5 pt-3.5 border-t border-[var(--color-border)]/60">
                 <div className="flex items-center gap-3">
                   {repo.language && (
-                    <span className="flex items-center gap-1 text-[var(--color-primary)]">
+                    <span className="flex items-center gap-1.5 text-[var(--color-primary)]">
                       <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)]" />
                       <span>{repo.language}</span>
                     </span>
@@ -303,39 +518,11 @@ export default function GithubDashboard() {
                   <span>⑂ {repo.forks_count}</span>
                 </div>
                 <span>
-                  Updated {new Date(repo.updated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  Updated {new Date(repo.updated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 </span>
               </div>
             </a>
           ))}
-        </div>
-      </section>
-
-      {/* Section D: Contribution Activity */}
-      <section className="p-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] space-y-4 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div>
-            <h2 className="text-sm font-medium text-[var(--color-primary)]">
-              Contribution Activity
-            </h2>
-            <p className="text-xs text-[var(--color-secondary)] mt-0.5">
-              Track real-time commits, pull requests, and code contributions on GitHub.
-            </p>
-          </div>
-          <a
-            href="https://github.com/Sanchit0307"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-secondary text-xs shrink-0 self-start sm:self-auto"
-          >
-            <span>View Complete Graph on GitHub</span>
-            <span className="text-[10px]">↗</span>
-          </a>
-        </div>
-
-        <div className="p-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-muted)] flex items-center justify-between text-xs text-[var(--color-secondary)]">
-          <span className="font-mono">Profile: @Sanchit0307</span>
-          <span className="text-[11px]">Direct public verification via GitHub REST API</span>
         </div>
       </section>
     </div>
