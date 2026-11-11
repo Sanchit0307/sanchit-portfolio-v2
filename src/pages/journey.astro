@@ -13,39 +13,80 @@ import { VERIFIED_EDUCATION } from '../data/siteData';
     description="My academic journey and key milestones."
   />
 
-  <div class="relative pl-6 sm:pl-8 border-l border-[var(--color-border)] ml-3 sm:ml-4 space-y-12">
-    {VERIFIED_EDUCATION.map((item) => (
-      <div class="relative group">
-        <!-- Timeline node dot -->
-        <div class="absolute -left-[31px] sm:-left-[39px] top-1.5 w-3 h-3 rounded-full bg-[var(--color-primary)] ring-4 ring-[var(--bg-page)]" />
+  <div class="relative pl-6 sm:pl-10 border-l border-[var(--color-border)] ml-3 sm:ml-4 space-y-12 sm:space-y-16">
+    {VERIFIED_EDUCATION.map((item, index) => {
+      const isOngoing = item.status === 'Ongoing';
+      return (
+        <article class="relative group animate-fade-in" style={`animation-delay: ${index * 100}ms`}>
+          <!-- Timeline Node Indicator -->
+          <div
+            class:list={[
+              'absolute -left-[31px] sm:-left-[47px] top-1.5 w-3.5 h-3.5 rounded-full transition-transform duration-300 group-hover:scale-125',
+              isOngoing
+                ? 'bg-[var(--color-primary)] ring-4 ring-[var(--color-primary)]/20'
+                : 'bg-[var(--color-secondary)] ring-4 ring-[var(--bg-page)]'
+            ]}
+            aria-hidden="true"
+          />
 
-        <div class="space-y-2">
-          {item.period && (
-            <span class="font-mono text-xs text-[var(--color-secondary)]">
-              {item.period}
-            </span>
-          )}
-          <h2 class="text-lg sm:text-xl font-medium tracking-tight text-[var(--color-primary)]">
-            {item.institution}
-          </h2>
-          {item.degree && (
-            <p class="text-sm text-[var(--color-secondary)]">
-              {item.degree}
-            </p>
-          )}
-          {item.location && (
-            <p class="text-sm text-[var(--color-secondary)]">
-              {item.location}
-            </p>
-          )}
-          {item.tag && (
-            <div class="pt-1">
-              <span class="chip">{item.tag}</span>
+          <!-- Milestone Content Card -->
+          <div class="space-y-3 max-w-2xl border border-[var(--color-border)] rounded-xl p-5 sm:p-6 bg-[var(--color-surface)] hover:border-[var(--color-primary)]/30 transition-colors shadow-2xs">
+            <!-- Stage Header & Period / Status -->
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div class="flex items-center gap-2">
+                <span class="font-medium text-[var(--color-primary)] text-sm">
+                  {item.stage}
+                </span>
+                {item.tag && <span class="chip text-[11px] px-2 py-0.5">{item.tag}</span>}
+              </div>
+
+              <div class="flex items-center gap-2 font-mono text-xs text-[var(--color-secondary)]">
+                {item.period && <span>{item.period}</span>}
+                <span
+                  class:list={[
+                    'px-2 py-0.5 rounded-full border text-[10px]',
+                    isOngoing
+                      ? 'border-[var(--color-primary)] text-[var(--color-primary)] font-medium'
+                      : 'border-[var(--color-border)] text-[var(--color-secondary)]'
+                  ]}
+                >
+                  {item.status}
+                </span>
+              </div>
             </div>
-          )}
-        </div>
-      </div>
-    ))}
+
+            <!-- Institution or Board Title -->
+            <div class="space-y-1 pt-1">
+              {item.institution && (
+                <h2 class="text-lg sm:text-xl font-normal tracking-tight text-[var(--color-primary)]">
+                  {item.institution}
+                </h2>
+              )}
+              {item.board && (
+                <h2 class="text-lg sm:text-xl font-normal tracking-tight text-[var(--color-primary)]">
+                  {item.board}
+                </h2>
+              )}
+
+              {item.degree && (
+                <p class="text-sm font-medium text-[var(--color-secondary)]">
+                  {item.degree}
+                </p>
+              )}
+              {item.location && (
+                <p class="text-xs text-[var(--color-secondary)]">
+                  {item.location}
+                </p>
+              )}
+            </div>
+
+            <!-- Description -->
+            <p class="text-sm text-[var(--color-secondary)] leading-relaxed pt-1">
+              {item.description}
+            </p>
+          </div>
+        </article>
+      );
+    })}
   </div>
 </BaseLayout>
-

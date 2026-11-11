@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
+import GithubDashboard from '../components/ui/GithubDashboard';
+---
+
+<BaseLayout
+  title="GitHub"
+  description="Real-time engineering metrics, repositories and public activity."
+>
+  <PageHeader
+    title="GitHub"
+    description="Real-time engineering metrics, repositories and public activity."
+  />
+
+  <GithubDashboard client:load />
+</BaseLayout>

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeader from '../components/ui/PageHeader.astro';
+import ContactForm from '../components/ui/ContactForm';
 import { PERSONAL_INFO } from '../data/siteData';
 ---
 
@@ -13,7 +14,8 @@ import { PERSONAL_INFO } from '../data/siteData';
     description="Let's connect. I'm open to opportunities and collaborations."
   />
 
-  <div class="space-y-12 py-8">
+  <div class="space-y-12">
+    <!-- Main Email Headline -->
     <div>
       <a
         href={`mailto:${PERSONAL_INFO.email}`}
@@ -24,8 +26,8 @@ import { PERSONAL_INFO } from '../data/siteData';
       </a>
     </div>
 
-    <!-- Action Buttons Row -->
-    <div class="flex flex-wrap items-center gap-4 pt-4">
+    <!-- Verified Action Buttons Row -->
+    <div class="flex flex-wrap items-center gap-4">
       <a
         href={PERSONAL_INFO.github}
         target="_blank"
@@ -62,6 +64,8 @@ import { PERSONAL_INFO } from '../data/siteData';
         <span class="text-xs">↓</span>
       </a>
     </div>
+
+    <!-- Interactive Contact Form -->
+    <ContactForm client:load />
   </div>
 </BaseLayout>
-

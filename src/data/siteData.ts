@@ -8,6 +8,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Projects', href: '/projects' },
   { label: 'Stack', href: '/stack' },
   { label: 'Journey', href: '/journey' },
+  { label: 'GitHub', href: '/github' },
   { label: 'Contact', href: '/contact' },
 ];
 
@@ -20,6 +21,7 @@ export const PERSONAL_INFO = {
   batch: '2025 – 2029',
   email: 'Sanchitmarwah03@gmail.com',
   github: 'https://github.com/Sanchit0307',
+  githubUsername: 'Sanchit0307',
   linkedin: 'https://www.linkedin.com/in/sanchit-marwah/',
   resumeUrl: '/resume.pdf',
 } as const;
@@ -92,7 +94,7 @@ export const VERIFIED_SKILLS: SkillCategory[] = [
       { name: 'CSS3' },
       { name: 'JavaScript' },
       { name: 'React' },
-      { name: 'Tailwind' },
+      { name: 'Tailwind CSS' },
     ],
   },
   {
@@ -114,23 +116,41 @@ export const VERIFIED_SKILLS: SkillCategory[] = [
   },
 ];
 
-export interface EducationItem {
-  institution: string;
-  degree?: string;
+export interface EducationMilestone {
+  stage: string;
   period?: string;
+  status: 'Ongoing' | 'Completed';
+  institution?: string;
+  board?: string;
+  degree?: string;
   location?: string;
+  description: string;
   tag?: string;
 }
 
-export const VERIFIED_EDUCATION: EducationItem[] = [
+export const VERIFIED_EDUCATION: EducationMilestone[] = [
   {
+    stage: 'Undergraduate Education',
+    period: '2025 – 2029',
+    status: 'Ongoing',
     institution: 'SRM University, Sonepat',
     degree: 'B.Tech — Computer Science and Engineering',
-    period: '2025 – 2029',
     tag: 'CSE',
+    description: 'Currently pursuing undergraduate studies in computer science, developing foundations in programming, software development and computer science concepts.',
   },
   {
+    stage: 'Class 12 — CBSE',
+    status: 'Completed',
+    board: 'Central Board of Secondary Education (CBSE)',
+    tag: 'Senior Secondary',
+    description: 'Completed senior secondary education, building the academic foundation for undergraduate studies.',
+  },
+  {
+    stage: 'Class 10 — CBSE',
+    status: 'Completed',
     institution: 'Doon Public School',
     location: 'Paschim Vihar, New Delhi',
+    tag: 'Secondary',
+    description: 'Completed secondary education under the CBSE curriculum.',
   },
 ];

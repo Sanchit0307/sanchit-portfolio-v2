@@ -7,7 +7,6 @@ import {
   siTailwindcss,
   siNodedotjs,
   siSupabase,
-  siPython,
   siGit,
   siGithub,
 } from 'simple-icons';
@@ -17,9 +16,6 @@ interface Props {
 }
 
 const { name } = Astro.props;
-
-// VS Code official path
-const vscodePath = 'M23.15 2.587L18.21.21a1.494 1.494 0 0 0-1.705.29l-9.46 8.63-4.12-3.128a.999.999 0 0 0-1.276.057L.327 7.261A1 1 0 0 0 .326 8.74L3.899 12 .326 15.26a1 1 0 0 0 .001 1.479L1.65 17.94a.999.999 0 0 0 1.276.057l4.12-3.128 9.46 8.63a1.492 1.492 0 0 0 1.704.29l4.94-2.377A1.5 1.5 0 0 0 24 20.06V3.939a1.5 1.5 0 0 0-.85-1.352zm-5.146 14.861L10.826 12l7.178-5.448v10.896z';
 ---
 
 {name === 'HTML5' || name === 'HTML' ? (
@@ -52,9 +48,29 @@ const vscodePath = 'M23.15 2.587L18.21.21a1.494 1.494 0 0 0-1.705.29l-9.46 8.63-
     <path fill="#3ECF8E" d={siSupabase.path} />
   </svg>
 ) : name === 'Python' ? (
-  <svg viewBox="0 0 24 24" class="w-7 h-7 transition-transform duration-200 group-hover:scale-110" aria-label="Python">
-    <path fill="#3776AB" d="M11.91 0c-3.15 0-5.18.34-5.18 2.05v2.73h5.27v.77H4.63C2.86 5.55 1.5 6.84 1.5 9.77c0 3.32 1.63 4.24 3.73 4.24h1.4v-1.99c0-1.77 1.48-3.23 3.28-3.23h5.18V5.33c0-1.8-1.57-3.28-3.37-3.28H9.98V.01h1.93zm-2.07 1.46a.82.82 0 1 1 0 1.64.82.82 0 0 1 0-1.64z" />
-    <path fill="#FFD43B" d="M12.09 24c3.15 0 5.18-.34 5.18-2.05v-2.73H12v-.77h7.37c1.77 0 3.13-1.29 3.13-4.22 0-3.32-1.63-4.24-3.73-4.24h-1.4v1.99c0 1.77-1.48 3.23-3.28 3.23H8.91v3.46c0 1.8 1.57 3.28 3.37 3.28h1.74v2.05h-1.93zm2.07-1.46a.82.82 0 1 1 0-1.64.82.82 0 0 1 0 1.64z" />
+  <svg viewBox="0 0 128 128" class="w-7 h-7 transition-transform duration-200 group-hover:scale-110" aria-label="Python">
+    <defs>
+      <linearGradient id="python-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#387EB8" />
+        <stop offset="100%" stop-color="#306998" />
+      </linearGradient>
+      <linearGradient id="python-yellow" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#FFE873" />
+        <stop offset="100%" stop-color="#FFD43B" />
+      </linearGradient>
+    </defs>
+    <!-- Top Blue Snake -->
+    <path
+      fill="url(#python-blue)"
+      d="M63.391 1.988c-4.222.02-8.252.379-11.8 1.007-10.45 1.846-12.346 5.71-12.346 12.837v9.411h24.693v3.137H29.977c-7.176 0-13.46 4.313-15.426 12.521-2.268 9.405-2.368 15.275 0 25.096 1.755 7.311 5.947 12.519 13.124 12.519h8.491V67.234c0-8.151 7.051-15.34 15.426-15.34h24.665c6.866 0 12.346-5.654 12.346-12.548V15.833c0-6.693-5.646-11.72-12.346-12.837-4.244-.706-8.645-1.027-12.866-1.008zM50.037 9.557c2.55 0 4.634 2.117 4.634 4.721 0 2.593-2.083 4.69-4.634 4.69-2.56 0-4.633-2.097-4.633-4.69-.001-2.604 2.073-4.721 4.633-4.721z"
+      transform="translate(0 10.26)"
+    />
+    <!-- Bottom Yellow Snake -->
+    <path
+      fill="url(#python-yellow)"
+      d="M91.682 28.38v10.966c0 8.5-7.208 15.655-15.426 15.655H51.591c-6.756 0-12.346 5.783-12.346 12.549v23.515c0 6.691 5.818 10.628 12.346 12.547 7.816 2.297 15.312 2.713 24.665 0 6.216-1.801 12.346-5.423 12.346-12.547v-9.412H63.938v-3.138h37.012c7.176 0 9.852-5.005 12.348-12.519 2.578-7.735 2.467-15.174 0-25.096-1.774-7.145-5.161-12.521-12.348-12.521h-9.268zM77.809 87.927c2.561 0 4.634 2.097 4.634 4.692 0 2.602-2.074 4.719-4.634 4.719-2.55 0-4.633-2.117-4.633-4.719 0-2.595 2.083-4.692 4.633-4.692z"
+      transform="translate(0 10.26)"
+    />
   </svg>
 ) : name === 'Git' ? (
   <svg viewBox="0 0 24 24" class="w-7 h-7 transition-transform duration-200 group-hover:scale-110" aria-label="Git">
@@ -65,17 +81,17 @@ const vscodePath = 'M23.15 2.587L18.21.21a1.494 1.494 0 0 0-1.705.29l-9.46 8.63-
     <path class="fill-[#181717] dark:fill-[#FFFFFF] transition-colors" d={siGithub.path} />
   </svg>
 ) : name === 'VS Code' ? (
-  <svg viewBox="0 0 24 24" class="w-7 h-7 transition-transform duration-200 group-hover:scale-110" aria-label="VS Code">
-    <path fill="#007ACC" d={vscodePath} />
+  <svg viewBox="0 0 128 128" class="w-7 h-7 transition-transform duration-200 group-hover:scale-110" aria-label="Visual Studio Code">
+    <path fill="#0065A9" d="M123.471 13.82 97.097 1.12A7.973 7.973 0 0 0 88 2.668L1.662 81.387a5.333 5.333 0 0 0 .006 7.887l7.052 6.411a5.333 5.333 0 0 0 6.811.303l103.971-78.875c3.488-2.646 8.498-.158 8.498 4.22v-.306a8.001 8.001 0 0 0-4.529-7.208Z"/>
+    <path fill="#007ACC" d="m123.471 114.181-26.374 12.698A7.973 7.973 0 0 1 88 125.333L1.662 46.613a5.333 5.333 0 0 1 .006-7.887l7.052-6.411a5.333 5.333 0 0 1 6.811-.303l103.971 78.874c3.488 2.647 8.498.159 8.498-4.219v.306a8.001 8.001 0 0 1-4.529 7.208Z"/>
+    <path fill="#1F9CF0" d="M97.098 126.882A7.977 7.977 0 0 1 88 125.333c2.952 2.952 8 .861 8-3.314V5.98c0-4.175-5.048-6.266-8-3.313a7.977 7.977 0 0 1 9.098-1.549L123.467 13.8A8 8 0 0 1 128 21.01v85.982a8 8 0 0 1-4.533 7.21l-26.369 12.681Z"/>
   </svg>
 ) : name === 'Figma' ? (
-  <svg viewBox="0 0 24 24" class="w-7 h-7 transition-transform duration-200 group-hover:scale-110" aria-label="Figma">
-    <path fill="#F24E1E" d="M12 12A3 3 0 0 0 9 9H6a3 3 0 0 0 0 6h3a3 3 0 0 0 3-3z" />
-    <path fill="#A259FF" d="M12 6A3 3 0 0 0 9 3H6a3 3 0 0 0 0 6h3a3 3 0 0 0 3-3z" />
-    <path fill="#FF7262" d="M15 3h-3v6h3a3 3 0 0 0 0-6z" />
-    <path fill="#1ABCFE" d="M15 9h-3v6h3a3 3 0 0 0 0-6z" />
-    <path fill="#0ACF83" d="M6 15a3 3 0 0 0 3 3v3a3 3 0 0 1-3-3z" />
+  <svg viewBox="0 0 128 128" class="w-7 h-7 transition-transform duration-200 group-hover:scale-110" aria-label="Figma">
+    <path fill="#0ACF83" d="M45.5 129c11.9 0 21.5-9.6 21.5-21.5V86H45.5C33.6 86 24 95.6 24 107.5S33.6 129 45.5 129z"/>
+    <path fill="#A259FF" d="M24 64.5C24 52.6 33.6 43 45.5 43H67v43H45.5C33.6 86 24 76.4 24 64.5z"/>
+    <path fill="#F24E1E" d="M24 21.5C24 9.6 33.6 0 45.5 0H67v43H45.5C33.6 43 24 33.4 24 21.5z"/>
+    <path fill="#FF7262" d="M67 0h21.5C100.4 0 110 9.6 110 21.5S100.4 43 88.5 43H67z"/>
+    <path fill="#1ABCFE" d="M110 64.5c0 11.9-9.6 21.5-21.5 21.5S67 76.4 67 64.5 76.6 43 88.5 43 110 52.6 110 64.5z"/>
   </svg>
-) : (
-  <span class="text-xs font-mono font-medium">{name.slice(0, 3)}</span>
-)}
+) : null}

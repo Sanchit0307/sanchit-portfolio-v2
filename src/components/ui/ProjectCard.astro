@@ -4,12 +4,16 @@ import type { Project } from '../../data/siteData';
 interface Props {
   project: Project;
   priority?: boolean;
+  class?: string;
 }
 
-const { project, priority = false } = Astro.props;
+const { project, priority = false, class: className = '' } = Astro.props;
 ---
 
-<article class="group border border-[var(--color-border)] rounded-xl bg-[var(--color-surface)] p-5 sm:p-6 transition-all duration-300 hover:border-[var(--color-primary)]/40 shadow-xs">
+<article class:list={[
+  'group border border-[var(--color-border)] rounded-xl bg-[var(--color-surface)] p-5 sm:p-6 transition-all duration-300 hover:border-[var(--color-primary)]/40 shadow-xs animate-fade-in',
+  className
+]}>
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
     <!-- Left Column: 16:10 Image Container with Original Colors & object-contain -->
     <div class="lg:col-span-6 w-full">

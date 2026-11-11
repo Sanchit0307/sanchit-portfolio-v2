@@ -41,10 +41,9 @@ const pageTitle = title ? `${title} — ${PERSONAL_INFO.name}` : `${PERSONAL_INF
   </head>
   <body class="flex flex-col min-h-screen">
     <Header />
-    <main class="flex-1 w-full max-w-5xl mx-auto px-6 py-12 sm:py-16">
+    <main class="flex-1 w-full max-w-5xl mx-auto px-6 py-12 sm:py-16 animate-fade-in">
       <slot />
     </main>
     <Footer />
   </body>
 </html>
-
