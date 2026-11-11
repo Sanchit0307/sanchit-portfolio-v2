@@ -11,7 +11,7 @@ const { project, priority = false, class: className = '' } = Astro.props;
 ---
 
 <article class:list={[
-  'group border border-[var(--color-border)] rounded-2xl bg-[var(--color-surface)] p-6 sm:p-8 transition-all duration-300 hover:border-[var(--color-primary)]/40 shadow-xs animate-fade-in',
+  'group border border-[var(--color-border)] rounded-2xl bg-[var(--color-surface)] p-6 sm:p-8 transition-all duration-300 hover:border-[var(--color-primary)]/40 hover:-translate-y-0.5 hover:shadow-sm',
   className
 ]}>
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">

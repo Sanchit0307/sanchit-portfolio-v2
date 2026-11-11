@@ -312,10 +312,26 @@ textarea:focus-visible {
 
 /* Scroll-triggered reveal states */
 @media (prefers-reduced-motion: no-preference) {
+  html.motion-ready [data-hero-animate]:not(.is-revealed) {
+    opacity: 0;
+    transform: translateY(14px);
+    will-change: opacity, transform;
+  }
+
+  html.motion-ready [data-hero-portrait]:not(.is-revealed) {
+    opacity: 0;
+    transform: scale(0.97);
+    will-change: opacity, transform;
+  }
+
   html.motion-ready [data-animate="fade-up"]:not(.is-revealed),
   html.motion-ready [data-animate="stagger"] [data-animate-item]:not(.is-revealed) {
     opacity: 0;
     transform: translateY(16px);
     will-change: opacity, transform;
+  }
+
+  [data-timeline-track] {
+    transform-origin: top;
   }
 }

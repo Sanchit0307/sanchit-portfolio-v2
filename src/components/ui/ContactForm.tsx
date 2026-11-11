@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 
 const PURPOSES = [
-  'Project collaboration',
   'Internship opportunity',
-  'Open-source collaboration',
+  'Project collaboration',
+  'Open-source contribution',
   'General enquiry',
   'Other',
 ] as const;
@@ -12,7 +12,7 @@ export default function ContactForm() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    purpose: 'Project collaboration',
+    purpose: 'Internship opportunity',
     message: '',
   });
 
@@ -69,7 +69,7 @@ export default function ContactForm() {
   };
 
   return (
-    <div className="mt-8 border border-[var(--color-border)] rounded-2xl p-6 sm:p-8 bg-[var(--color-surface)] shadow-xs">
+    <div className="w-full border border-[var(--color-border)] rounded-2xl p-6 sm:p-8 bg-[var(--color-surface)] shadow-xs">
       <div className="mb-6 space-y-1">
         <h2 className="text-xl font-normal tracking-tight text-[var(--color-primary)]">
           Send a Direct Message

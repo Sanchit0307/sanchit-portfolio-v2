@@ -5,47 +5,60 @@ import ThemeToggle from './ThemeToggle';
 const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
 ---
 
-<header class="w-full border-b border-[var(--color-border)] bg-[var(--bg-page)]/80 backdrop-blur-sm sticky top-0 z-40 transition-colors">
+<header
+  id="main-header"
+  class="sticky top-0 z-50 w-full transition-all duration-300 border-b border-transparent bg-[var(--bg-page)]/60 backdrop-blur-sm"
+>
   <div class="max-w-[1340px] mx-auto px-6 sm:px-8 lg:px-12 h-16 sm:h-20 flex items-center justify-between">
-    <!-- Brand Mark -->
+    <!-- Brand Mark / Logo -->
     <a
       href="/"
-      class="text-base sm:text-lg font-semibold tracking-tight text-[var(--color-primary)] hover:opacity-80 transition-opacity focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded"
-      aria-label="Home - Sanchit Marwah"
+      class="text-base sm:text-lg font-semibold tracking-tight text-[var(--color-primary)] hover:opacity-80 transition-opacity focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded inline-flex items-center gap-1.5"
+      aria-label="Sanchit Marwah - Homepage"
     >
-      {PERSONAL_INFO.initials}
+      <span>{PERSONAL_INFO.initials}</span>
     </a>
 
-    <!-- Desktop Navigation -->
-    <nav class="hidden md:flex items-center gap-7 lg:gap-9" aria-label="Main Navigation">
+    <!-- Desktop Navigation Links -->
+    <nav class="hidden md:flex items-center gap-6 lg:gap-8" aria-label="Main Navigation">
       {NAV_ITEMS.map((item) => {
-        const isActive = pathname === item.href;
+        const isExact = pathname === item.href;
+        const isPrefix = item.href !== '/' && !item.href.startsWith('/#') && pathname.startsWith(item.href);
+        const isActive = isExact || isPrefix;
+
         return (
           <a
             href={item.href}
+            data-nav-href={item.href}
             class:list={[
-              'text-sm transition-colors py-1.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded',
+              'nav-link text-xs lg:text-sm transition-all duration-200 py-1.5 relative focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded',
               isActive
-                ? 'font-medium text-[var(--color-primary)] border-b border-[var(--color-primary)]'
+                ? 'font-medium text-[var(--color-primary)] active-nav'
                 : 'text-[var(--color-secondary)] hover:text-[var(--color-primary)]'
             ]}
             aria-current={isActive ? 'page' : undefined}
           >
-            {item.label}
+            <span>{item.label}</span>
+            {isActive && (
+              <span
+                class="active-indicator absolute bottom-0 left-0 right-0 h-[1.5px] bg-[var(--color-primary)] rounded-full transition-all"
+                aria-hidden="true"
+              />
+            )}
           </a>
         );
       })}
     </nav>
 
-    <!-- Controls (Theme Toggle + Mobile Menu Trigger) -->
-    <div class="flex items-center gap-3">
+    <!-- Controls (Theme Toggle + Mobile Hamburger) -->
+    <div class="flex items-center gap-2.5 sm:gap-3">
       <ThemeToggle client:load />
 
       <!-- Mobile Menu Button -->
       <button
         id="mobile-menu-btn"
         type="button"
-        class="md:hidden inline-flex items-center justify-center w-8 h-8 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] cursor-pointer"
+        class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] cursor-pointer"
         aria-label="Toggle navigation menu"
         aria-expanded="false"
       >
@@ -81,19 +94,23 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
   <!-- Mobile Dropdown Navigation -->
   <div
     id="mobile-menu"
-    class="hidden md:hidden border-t border-[var(--color-border)] bg-[var(--color-surface)] px-6 py-4 shadow-sm"
+    class="hidden md:hidden border-t border-[var(--color-border)] bg-[var(--color-surface)]/95 backdrop-blur-md px-6 py-4 shadow-md transition-all"
   >
-    <nav class="flex flex-col gap-3" aria-label="Mobile Navigation">
+    <nav class="flex flex-col gap-1.5" aria-label="Mobile Navigation">
       {NAV_ITEMS.map((item) => {
-        const isActive = pathname === item.href;
+        const isExact = pathname === item.href;
+        const isPrefix = item.href !== '/' && !item.href.startsWith('/#') && pathname.startsWith(item.href);
+        const isActive = isExact || isPrefix;
+
         return (
           <a
             href={item.href}
+            data-mobile-nav-href={item.href}
             class:list={[
-              'text-sm py-2 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded',
+              'text-sm py-2 px-2.5 rounded-lg transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)]',
               isActive
-                ? 'font-medium text-[var(--color-primary)]'
-                : 'text-[var(--color-secondary)] hover:text-[var(--color-primary)]'
+                ? 'font-medium text-[var(--color-primary)] bg-[var(--color-muted)]'
+                : 'text-[var(--color-secondary)] hover:text-[var(--color-primary)] hover:bg-[var(--color-muted)]/50'
             ]}
             aria-current={isActive ? 'page' : undefined}
           >
@@ -106,18 +123,86 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
 </header>
 
 <script>
-  const menuBtn = document.getElementById('mobile-menu-btn');
-  const mobileMenu = document.getElementById('mobile-menu');
-  const openIcon = menuBtn?.querySelector('.menu-open-icon');
-  const closeIcon = menuBtn?.querySelector('.menu-close-icon');
+  function setupHeader() {
+    const header = document.getElementById('main-header');
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const openIcon = menuBtn?.querySelector('.menu-open-icon');
+    const closeIcon = menuBtn?.querySelector('.menu-close-icon');
 
-  if (menuBtn && mobileMenu && openIcon && closeIcon) {
-    menuBtn.addEventListener('click', () => {
-      const isExpanded = menuBtn.getAttribute('aria-expanded') === 'true';
-      menuBtn.setAttribute('aria-expanded', String(!isExpanded));
-      mobileMenu.classList.toggle('hidden');
-      openIcon.classList.toggle('hidden');
-      closeIcon.classList.toggle('hidden');
-    });
+    // Scroll treatment: subtle border & backdrop treatment on scroll
+    function onScroll() {
+      if (!header) return;
+      if (window.scrollY > 15) {
+        header.classList.add('border-[var(--color-border)]', 'bg-[var(--bg-page)]/90', 'backdrop-blur-md', 'shadow-2xs');
+        header.classList.remove('border-transparent', 'bg-[var(--bg-page)]/60');
+      } else {
+        header.classList.remove('border-[var(--color-border)]', 'bg-[var(--bg-page)]/90', 'shadow-2xs');
+        header.classList.add('border-transparent', 'bg-[var(--bg-page)]/60');
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    // Mobile menu toggle
+    if (menuBtn && mobileMenu && openIcon && closeIcon) {
+      menuBtn.onclick = () => {
+        const isExpanded = menuBtn.getAttribute('aria-expanded') === 'true';
+        menuBtn.setAttribute('aria-expanded', String(!isExpanded));
+        mobileMenu.classList.toggle('hidden');
+        openIcon.classList.toggle('hidden');
+        closeIcon.classList.toggle('hidden');
+      };
+
+      // Close menu on link click
+      mobileMenu.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => {
+          menuBtn.setAttribute('aria-expanded', 'false');
+          mobileMenu.classList.add('hidden');
+          openIcon.classList.remove('hidden');
+          closeIcon.classList.add('hidden');
+        });
+      });
+    }
+
+    // Dynamic active section observer on homepage
+    if (window.location.pathname === '/' || window.location.pathname === '') {
+      const sections = ['philosophy', 'projects', 'skills', 'journey', 'contact'];
+      const sectionElements = sections
+        .map((id) => document.getElementById(id))
+        .filter((el): el is HTMLElement => el !== null);
+
+      if (sectionElements.length > 0) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                const sectionId = entry.target.id;
+                // Highlight corresponding nav link if section matches
+                document.querySelectorAll<HTMLAnchorElement>('.nav-link').forEach((link) => {
+                  const href = link.getAttribute('data-nav-href');
+                  const match =
+                    (sectionId === 'projects' && (href === '/projects' || href === '/#projects')) ||
+                    (sectionId === 'skills' && (href === '/skills' || href === '/#skills')) ||
+                    (sectionId === 'contact' && (href === '/contact' || href === '/#contact'));
+
+                  if (match) {
+                    link.classList.add('text-[var(--color-primary)]', 'font-medium');
+                    link.classList.remove('text-[var(--color-secondary)]');
+                  }
+                });
+              }
+            });
+          },
+          { threshold: 0.3 }
+        );
+
+        sectionElements.forEach((el) => observer.observe(el));
+      }
+    }
   }
+
+  setupHeader();
+  document.addEventListener('astro:page-load', setupHeader);
 </script>

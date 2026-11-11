@@ -6,10 +6,11 @@ export interface NavItem {
 export const NAV_ITEMS: NavItem[] = [
   { label: 'Home', href: '/' },
   { label: 'Projects', href: '/projects' },
-  { label: 'Stack', href: '/stack' },
-  { label: 'Journey', href: '/journey' },
+  { label: 'Blog', href: '/blog' },
+  { label: 'Skills', href: '/skills' },
   { label: 'Engineering', href: '/github' },
-  { label: 'Contact', href: '/contact' },
+  { label: 'Achievements', href: '/achievements' },
+  { label: 'Contact', href: '/#contact' },
 ];
 
 export const PERSONAL_INFO = {

@@ -1,13 +1,18 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectCard from '../components/ui/ProjectCard.astro';
-import { PERSONAL_INFO, VERIFIED_PROJECTS } from '../data/siteData';
-
-const featuredProjects = VERIFIED_PROJECTS.filter((p) => p.featured);
+import TechIcon from '../components/ui/TechIcon.astro';
+import ContactForm from '../components/ui/ContactForm';
+import {
+  PERSONAL_INFO,
+  VERIFIED_PROJECTS,
+  VERIFIED_SKILLS,
+  VERIFIED_EDUCATION,
+} from '../data/siteData';
 ---
 
 <BaseLayout>
-  <div class="space-y-16 sm:space-y-24">
+  <div class="space-y-24 sm:space-y-32">
     <!-- Top Identity / Meta Bar -->
     <div class="flex items-center justify-between text-xs sm:text-sm text-[var(--color-secondary)] pb-6 border-b border-[var(--color-border)]">
       <span class="font-medium text-[var(--color-primary)] text-sm sm:text-base">{PERSONAL_INFO.name}</span>
@@ -17,25 +22,31 @@ const featuredProjects = VERIFIED_PROJECTS.filter((p) => p.featured);
       </div>
     </div>
 
-    <!-- Hero Section with Expansive Desktop Proportions -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center" data-animate="fade-up">
+    <!-- 1. HERO SECTION -->
+    <section id="hero" class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
       <div class="lg:col-span-7 xl:col-span-7 space-y-6 sm:space-y-8">
-        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-[var(--color-primary)] leading-[1.08]">
-          {PERSONAL_INFO.role}
-        </h1>
-        <p class="text-base sm:text-lg lg:text-xl text-[var(--color-secondary)] leading-relaxed max-w-2xl">
+        <div data-hero-animate>
+          <span class="text-xs sm:text-sm font-mono uppercase tracking-wider text-[var(--color-secondary)] block mb-2">
+            Engineering Portfolio
+          </span>
+          <h1 class="text-3xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-[var(--color-primary)] leading-[1.08]">
+            {PERSONAL_INFO.role}
+          </h1>
+        </div>
+
+        <p data-hero-animate class="text-base sm:text-lg lg:text-xl text-[var(--color-secondary)] leading-relaxed max-w-2xl">
           {PERSONAL_INFO.bio}
         </p>
 
         <!-- Primary Action Controls -->
-        <div class="flex flex-wrap items-center gap-3.5 pt-2">
-          <a href="/projects" class="btn-primary">
+        <div data-hero-animate class="flex flex-wrap items-center gap-3.5 pt-2">
+          <a href="#projects" class="btn-primary">
             <span>View Projects</span>
-            <span class="text-xs">↗</span>
+            <span class="text-xs">↓</span>
           </a>
           <a href={PERSONAL_INFO.resumeUrl} target="_blank" rel="noopener noreferrer" class="btn-secondary">
             <span>Resume</span>
-            <span class="text-xs">↓</span>
+            <span class="text-xs">↗</span>
           </a>
           <a
             href={PERSONAL_INFO.github}
@@ -62,9 +73,9 @@ const featuredProjects = VERIFIED_PROJECTS.filter((p) => p.featured);
         </div>
       </div>
 
-      <!-- Portrait Container (Preserving grayscale by default, color transition on hover) -->
+      <!-- Portrait Container (Preserving original placement and interaction) -->
       <div class="lg:col-span-5 xl:col-span-5 flex justify-center lg:justify-end">
-        <div class="relative w-64 h-80 sm:w-76 sm:h-96 lg:w-84 lg:h-[430px] rounded-2xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-muted)] shadow-xs">
+        <div data-hero-portrait class="relative w-64 h-80 sm:w-76 sm:h-96 lg:w-84 lg:h-[430px] rounded-2xl overflow-hidden border border-[var(--color-border)] bg-[var(--color-muted)] shadow-xs">
           <img
             src="/images/portrait.jpg"
             alt="Sanchit Marwah portrait"
@@ -74,14 +85,88 @@ const featuredProjects = VERIFIED_PROJECTS.filter((p) => p.featured);
           />
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Featured Work Section -->
-    <section class="space-y-8 pt-10 border-t border-[var(--color-border)]" data-animate="fade-up">
+    <!-- 2. SECTION A: PHILOSOPHY AND FOCUS -->
+    <section id="philosophy" class="space-y-8 pt-12 border-t border-[var(--color-border)] scroll-mt-24" data-animate="fade-up">
+      <div class="flex items-center gap-2 font-mono text-xs sm:text-sm text-[var(--color-secondary)]">
+        <span>/ 01</span>
+        <span class="font-sans font-medium text-[var(--color-primary)] text-sm sm:text-base">Philosophy & Focus</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        <!-- Left Column: Approach to Software Development -->
+        <div class="lg:col-span-6 space-y-4 p-6 sm:p-8 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs">
+          <span class="text-xs font-mono uppercase tracking-wider text-[var(--color-secondary)] block">
+            Engineering Approach
+          </span>
+          <h2 class="text-xl sm:text-2xl font-normal tracking-tight text-[var(--color-primary)] leading-snug">
+            Building practical software grounded in solid fundamentals.
+          </h2>
+          <p class="text-sm text-[var(--color-secondary)] leading-relaxed">
+            As a first-year Computer Science and Engineering student at SRM University, my focus centers on understanding core computing fundamentals before reaching for high-level abstractions. I believe genuine engineering skill is forged by solving real-world challenges with readable, maintainable, and pragmatic code.
+          </p>
+          <p class="text-sm text-[var(--color-secondary)] leading-relaxed">
+            Rather than assembling superficial demo projects, I prioritize building functional platforms that serve genuine human needs—such as civic grievance portals and campus collaboration systems. Every project is an opportunity for iterative experimentation, debugging, and continuous technical growth.
+          </p>
+        </div>
+
+        <!-- Right Column: Current Interests & Technical Areas -->
+        <div class="lg:col-span-6 space-y-4 p-6 sm:p-8 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs">
+          <span class="text-xs font-mono uppercase tracking-wider text-[var(--color-secondary)] block">
+            Current Focus Areas
+          </span>
+          <h2 class="text-xl sm:text-2xl font-normal tracking-tight text-[var(--color-primary)] leading-snug">
+            What I'm exploring and actively refining.
+          </h2>
+
+          <ul class="space-y-3 pt-2 text-sm text-[var(--color-secondary)] font-sans">
+            <li class="flex items-start gap-3">
+              <span class="font-mono text-xs text-[var(--color-primary)] mt-1">01</span>
+              <div>
+                <strong class="text-[var(--color-primary)] font-medium">Modern Web Development:</strong>
+                <span> Component-driven architectures, responsive layout systems, and accessible interfaces.</span>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="font-mono text-xs text-[var(--color-primary)] mt-1">02</span>
+              <div>
+                <strong class="text-[var(--color-primary)] font-medium">Full-Stack Architecture:</strong>
+                <span> Connecting reactive frontends with REST/GraphQL APIs, relational data stores, and serverless backends.</span>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="font-mono text-xs text-[var(--color-primary)] mt-1">03</span>
+              <div>
+                <strong class="text-[var(--color-primary)] font-medium">Data Structures & Algorithms:</strong>
+                <span> Strengthening disciplined problem-solving and algorithmic complexity analysis in foundational languages.</span>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="font-mono text-xs text-[var(--color-primary)] mt-1">04</span>
+              <div>
+                <strong class="text-[var(--color-primary)] font-medium">Open-Source & Collaboration:</strong>
+                <span> Learning from public codebases, version control workflows with Git, and community peer review.</span>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="font-mono text-xs text-[var(--color-primary)] mt-1">05</span>
+              <div>
+                <strong class="text-[var(--color-primary)] font-medium">Software Engineering Rigor:</strong>
+                <span> Modular structure, meaningful documentation, and thoughtful error handling.</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. SECTION B: SELECTED PROJECTS -->
+    <section id="projects" class="space-y-8 pt-12 border-t border-[var(--color-border)] scroll-mt-24" data-animate="fade-up">
       <div class="flex items-center justify-between text-xs sm:text-sm">
         <div class="flex items-center gap-2 font-mono text-[var(--color-secondary)]">
-          <span>/ 01</span>
-          <span class="font-sans font-medium text-[var(--color-primary)] text-sm sm:text-base">Featured Work</span>
+          <span>/ 02</span>
+          <span class="font-sans font-medium text-[var(--color-primary)] text-sm sm:text-base">Selected Projects</span>
         </div>
         <a href="/projects" class="text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-colors inline-flex items-center gap-1 font-medium">
           <span>View All Projects</span>
@@ -90,11 +175,211 @@ const featuredProjects = VERIFIED_PROJECTS.filter((p) => p.featured);
       </div>
 
       <div class="space-y-8 sm:space-y-10" data-animate="stagger">
-        {featuredProjects.map((project, index) => (
+        {VERIFIED_PROJECTS.map((project, index) => (
           <div data-animate-item>
-            <ProjectCard project={project} priority={index === 0} class={`stagger-${index + 1}`} />
+            <ProjectCard project={project} priority={index === 0} />
           </div>
         ))}
+      </div>
+    </section>
+
+    <!-- 4. SECTION C: SKILLS AND TECHNOLOGIES -->
+    <section id="skills" class="space-y-8 pt-12 border-t border-[var(--color-border)] scroll-mt-24" data-animate="fade-up">
+      <div class="flex items-center justify-between text-xs sm:text-sm">
+        <div class="flex items-center gap-2 font-mono text-[var(--color-secondary)]">
+          <span>/ 03</span>
+          <span class="font-sans font-medium text-[var(--color-primary)] text-sm sm:text-base">Skills & Technologies</span>
+        </div>
+        <a href="/skills" class="text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-colors inline-flex items-center gap-1 font-medium">
+          <span>Explore Full Stack Details</span>
+          <span>↗</span>
+        </a>
+      </div>
+
+      <div class="p-6 sm:p-8 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs space-y-8">
+        <div class="space-y-1 max-w-xl">
+          <h3 class="text-lg font-normal tracking-tight text-[var(--color-primary)]">
+            Technical Stack & Workflow
+          </h3>
+          <p class="text-xs text-[var(--color-secondary)]">
+            Core technologies and tools I work with across frontend and full-stack development.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8" data-animate="stagger">
+          {VERIFIED_SKILLS.map((section) => (
+            <div class="space-y-4" data-animate-item>
+              <h4 class="text-xs font-mono uppercase tracking-wider text-[var(--color-secondary)] pb-2 border-b border-[var(--color-border)]">
+                {section.category}
+              </h4>
+              <div class="flex flex-wrap gap-3">
+                {section.items.map((skill) => (
+                  <div class="flex items-center gap-2.5 px-3 py-2 rounded-xl border border-[var(--color-border)] bg-[var(--bg-page)] hover:border-[var(--color-primary)]/40 transition-colors shadow-2xs group">
+                    <div class="w-5 h-5 flex items-center justify-center shrink-0">
+                      <TechIcon name={skill.name} />
+                    </div>
+                    <span class="text-xs text-[var(--color-primary)] font-medium">
+                      {skill.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. SECTION D: CURRENT JOURNEY -->
+    <section id="journey" class="space-y-8 pt-12 border-t border-[var(--color-border)] scroll-mt-24" data-animate="fade-up">
+      <div class="flex items-center justify-between text-xs sm:text-sm">
+        <div class="flex items-center gap-2 font-mono text-[var(--color-secondary)]">
+          <span>/ 04</span>
+          <span class="font-sans font-medium text-[var(--color-primary)] text-sm sm:text-base">Current Journey</span>
+        </div>
+        <a href="/journey" class="text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-colors inline-flex items-center gap-1 font-medium">
+          <span>View Complete Journey Details</span>
+          <span>↗</span>
+        </a>
+      </div>
+
+      <div class="p-6 sm:p-8 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs space-y-6">
+        <div class="space-y-1">
+          <h3 class="text-lg font-normal tracking-tight text-[var(--color-primary)]">
+            Academic & Development Milestones
+          </h3>
+          <p class="text-xs text-[var(--color-secondary)]">
+            Educational timeline from secondary school to ongoing university computer science studies.
+          </p>
+        </div>
+
+        <div class="relative pl-6 sm:pl-8 ml-2 space-y-8" data-animate="stagger">
+          <!-- Animated vertical timeline line -->
+          <div
+            data-timeline-track
+            class="absolute left-0 top-2 bottom-2 w-[1px] bg-[var(--color-border)] origin-top transition-transform duration-700"
+            aria-hidden="true"
+          />
+
+          {VERIFIED_EDUCATION.map((item) => {
+            const isOngoing = item.status === 'Ongoing';
+            return (
+              <div class="relative group" data-animate-item>
+                <!-- Indicator Node -->
+                <div
+                  class:list={[
+                    'absolute -left-[29px] sm:-left-[37px] top-1.5 w-3 h-3 rounded-full transition-transform duration-300 group-hover:scale-125',
+                    isOngoing
+                      ? 'bg-[var(--color-primary)] ring-4 ring-[var(--color-primary)]/20'
+                      : 'bg-[var(--color-secondary)] ring-4 ring-[var(--bg-page)]'
+                  ]}
+                  aria-hidden="true"
+                />
+
+                <div class="space-y-1.5 max-w-2xl">
+                  <div class="flex flex-wrap items-center gap-2.5 text-xs">
+                    <span class="font-medium text-[var(--color-primary)]">
+                      {item.stage}
+                    </span>
+                    {item.period && <span class="font-mono text-[var(--color-secondary)]">{item.period}</span>}
+                    <span
+                      class:list={[
+                        'px-2 py-0.5 rounded-full border text-[10px] font-mono',
+                        isOngoing
+                          ? 'border-[var(--color-primary)] text-[var(--color-primary)] font-medium'
+                          : 'border-[var(--color-border)] text-[var(--color-secondary)]'
+                      ]}
+                    >
+                      {item.status}
+                    </span>
+                  </div>
+
+                  {item.institution && (
+                    <h4 class="text-sm font-medium text-[var(--color-primary)]">
+                      {item.institution}
+                    </h4>
+                  )}
+                  {item.board && (
+                    <h4 class="text-sm font-medium text-[var(--color-primary)]">
+                      {item.board}
+                    </h4>
+                  )}
+
+                  <p class="text-xs text-[var(--color-secondary)] leading-relaxed pt-0.5">
+                    {item.description}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. SECTION E: CONTACT SECTION AT THE BOTTOM -->
+    <section id="contact" class="space-y-8 pt-12 border-t border-[var(--color-border)] scroll-mt-24" data-animate="fade-up">
+      <div class="flex items-center gap-2 font-mono text-xs sm:text-sm text-[var(--color-secondary)]">
+        <span>/ 05</span>
+        <span class="font-sans font-medium text-[var(--color-primary)] text-sm sm:text-base">Contact & Connect</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        <!-- Left: Statement & Direct Coordinates -->
+        <div class="lg:col-span-5 space-y-6">
+          <div class="space-y-3">
+            <h2 class="text-3xl sm:text-4xl font-normal tracking-tight text-[var(--color-primary)] leading-tight">
+              Let's build something meaningful.
+            </h2>
+            <p class="text-sm text-[var(--color-secondary)] leading-relaxed">
+              Interested in web development, engineering, open-source collaboration or building useful products? I'd be happy to connect.
+            </p>
+          </div>
+
+          <!-- Direct Channels Cards -->
+          <div class="space-y-3 pt-2">
+            <a
+              href={`mailto:${PERSONAL_INFO.email}`}
+              class="flex items-center justify-between p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-primary)]/40 transition-colors group"
+            >
+              <div>
+                <span class="text-[11px] font-mono text-[var(--color-secondary)] block">Direct Email</span>
+                <span class="text-sm font-medium text-[var(--color-primary)]">{PERSONAL_INFO.email}</span>
+              </div>
+              <span class="text-xs text-[var(--color-secondary)] group-hover:text-[var(--color-primary)] transition-colors">↗</span>
+            </a>
+
+            <a
+              href={PERSONAL_INFO.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-between p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-primary)]/40 transition-colors group"
+            >
+              <div>
+                <span class="text-[11px] font-mono text-[var(--color-secondary)] block">GitHub Activity</span>
+                <span class="text-sm font-medium text-[var(--color-primary)]">github.com/Sanchit0307</span>
+              </div>
+              <span class="text-xs text-[var(--color-secondary)] group-hover:text-[var(--color-primary)] transition-colors">↗</span>
+            </a>
+
+            <a
+              href={PERSONAL_INFO.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-between p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-primary)]/40 transition-colors group"
+            >
+              <div>
+                <span class="text-[11px] font-mono text-[var(--color-secondary)] block">Professional Profile</span>
+                <span class="text-sm font-medium text-[var(--color-primary)]">linkedin.com/in/sanchit-marwah</span>
+              </div>
+              <span class="text-xs text-[var(--color-secondary)] group-hover:text-[var(--color-primary)] transition-colors">↗</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: Contact Form -->
+        <div class="lg:col-span-7">
+          <ContactForm client:load />
+        </div>
       </div>
     </section>
   </div>
