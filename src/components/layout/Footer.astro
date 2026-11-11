@@ -1,0 +1,38 @@
+---
+import { PERSONAL_INFO } from '../../data/siteData';
+---
+
+<footer class="w-full border-t border-[var(--color-border)] mt-auto py-8">
+  <div class="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[var(--color-secondary)]">
+    <div>
+      <span>{PERSONAL_INFO.name}</span>
+      <span class="mx-2">·</span>
+      <span class="font-mono">{PERSONAL_INFO.branch} {PERSONAL_INFO.batch}</span>
+    </div>
+
+    <div class="flex items-center gap-6">
+      <a
+        href={PERSONAL_INFO.github}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="hover:text-[var(--color-primary)] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded"
+      >
+        GitHub
+      </a>
+      <a
+        href={PERSONAL_INFO.linkedin}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="hover:text-[var(--color-primary)] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded"
+      >
+        LinkedIn
+      </a>
+      <a
+        href={`mailto:${PERSONAL_INFO.email}`}
+        class="hover:text-[var(--color-primary)] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded"
+      >
+        Email
+      </a>
+    </div>
+  </div>
+</footer>

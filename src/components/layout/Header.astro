@@ -1,0 +1,123 @@
+---
+import { NAV_ITEMS, PERSONAL_INFO } from '../../data/siteData';
+import ThemeToggle from './ThemeToggle';
+
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<header class="w-full border-b border-[var(--color-border)] bg-[var(--bg-page)]/80 backdrop-blur-sm sticky top-0 z-40 transition-colors">
+  <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+    <!-- Brand Mark -->
+    <a
+      href="/"
+      class="text-base font-semibold tracking-tight text-[var(--color-primary)] hover:opacity-80 transition-opacity focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded"
+      aria-label="Home - Sanchit Marwah"
+    >
+      {PERSONAL_INFO.initials}
+    </a>
+
+    <!-- Desktop Navigation -->
+    <nav class="hidden md:flex items-center gap-8" aria-label="Main Navigation">
+      {NAV_ITEMS.map((item) => {
+        const isActive = pathname === item.href;
+        return (
+          <a
+            href={item.href}
+            class:list={[
+              'text-sm transition-colors py-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded',
+              isActive
+                ? 'font-medium text-[var(--color-primary)]'
+                : 'text-[var(--color-secondary)] hover:text-[var(--color-primary)]'
+            ]}
+            aria-current={isActive ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        );
+      })}
+    </nav>
+
+    <!-- Controls (Theme Toggle + Mobile Menu Trigger) -->
+    <div class="flex items-center gap-3">
+      <ThemeToggle client:load />
+
+      <!-- Mobile Menu Button -->
+      <button
+        id="mobile-menu-btn"
+        type="button"
+        class="md:hidden inline-flex items-center justify-center w-8 h-8 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] cursor-pointer"
+        aria-label="Toggle navigation menu"
+        aria-expanded="false"
+      >
+        <svg
+          class="w-4 h-4 menu-open-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="4" x2="20" y1="12" y2="12"></line>
+          <line x1="4" x2="20" y1="6" y2="6"></line>
+          <line x1="4" x2="20" y1="18" y2="18"></line>
+        </svg>
+        <svg
+          class="w-4 h-4 menu-close-icon hidden"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Dropdown Navigation -->
+  <div
+    id="mobile-menu"
+    class="hidden md:hidden border-t border-[var(--color-border)] bg-[var(--color-surface)] px-6 py-4 shadow-sm"
+  >
+    <nav class="flex flex-col gap-3" aria-label="Mobile Navigation">
+      {NAV_ITEMS.map((item) => {
+        const isActive = pathname === item.href;
+        return (
+          <a
+            href={item.href}
+            class:list={[
+              'text-sm py-1.5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded',
+              isActive
+                ? 'font-medium text-[var(--color-primary)]'
+                : 'text-[var(--color-secondary)] hover:text-[var(--color-primary)]'
+            ]}
+            aria-current={isActive ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        );
+      })}
+    </nav>
+  </div>
+</header>
+
+<script>
+  const menuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const openIcon = menuBtn?.querySelector('.menu-open-icon');
+  const closeIcon = menuBtn?.querySelector('.menu-close-icon');
+
+  if (menuBtn && mobileMenu && openIcon && closeIcon) {
+    menuBtn.addEventListener('click', () => {
+      const isExpanded = menuBtn.getAttribute('aria-expanded') === 'true';
+      menuBtn.setAttribute('aria-expanded', String(!isExpanded));
+      mobileMenu.classList.toggle('hidden');
+      openIcon.classList.toggle('hidden');
+      closeIcon.classList.toggle('hidden');
+    });
+  }
+</script>

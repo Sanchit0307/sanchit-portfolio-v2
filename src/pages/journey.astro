@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
+import { VERIFIED_EDUCATION } from '../data/siteData';
+---
+
+<BaseLayout
+  title="Journey"
+  description="My academic journey and key milestones."
+>
+  <PageHeader
+    title="Journey"
+    description="My academic journey and key milestones."
+  />
+
+  <div class="relative pl-6 sm:pl-8 border-l border-[var(--color-border)] ml-3 sm:ml-4 space-y-12">
+    {VERIFIED_EDUCATION.map((item) => (
+      <div class="relative group">
+        <!-- Timeline node dot -->
+        <div class="absolute -left-[31px] sm:-left-[39px] top-1.5 w-3 h-3 rounded-full bg-[var(--color-primary)] ring-4 ring-[var(--bg-page)]" />
+
+        <div class="space-y-2">
+          {item.period && (
+            <span class="font-mono text-xs text-[var(--color-secondary)]">
+              {item.period}
+            </span>
+          )}
+          <h2 class="text-lg sm:text-xl font-medium tracking-tight text-[var(--color-primary)]">
+            {item.institution}
+          </h2>
+          {item.degree && (
+            <p class="text-sm text-[var(--color-secondary)]">
+              {item.degree}
+            </p>
+          )}
+          {item.location && (
+            <p class="text-sm text-[var(--color-secondary)]">
+              {item.location}
+            </p>
+          )}
+          {item.tag && (
+            <div class="pt-1">
+              <span class="chip">{item.tag}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+</BaseLayout>

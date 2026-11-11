@@ -1,0 +1,49 @@
+---
+import '../styles/global.css';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import { PERSONAL_INFO } from '../data/siteData';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description = PERSONAL_INFO.bio } = Astro.props;
+const pageTitle = title ? `${title} — ${PERSONAL_INFO.name}` : `${PERSONAL_INFO.name} — ${PERSONAL_INFO.role}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+
+    <!-- Avoid theme flicker script -->
+    <script is:inline>
+      (function() {
+        const stored = typeof localStorage !== 'undefined' ? localStorage.getItem('theme') : null;
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = stored ? stored : (prefersDark ? 'dark' : 'light');
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+          document.documentElement.dataset.theme = 'dark';
+        } else {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.dataset.theme = 'light';
+        }
+      })();
+    </script>
+  </head>
+  <body class="flex flex-col min-h-screen">
+    <Header />
+    <main class="flex-1 w-full max-w-5xl mx-auto px-6 py-12 sm:py-16">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
