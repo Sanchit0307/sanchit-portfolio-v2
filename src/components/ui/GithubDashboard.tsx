@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { initScrollAnimations } from '../../scripts/scrollAnimations';
 
 interface Repo {
   id: number;
@@ -79,6 +80,7 @@ export default function GithubDashboard() {
             setCalendar(parsed.calendar);
             setContributionsConfigured(parsed.contributionsConfigured);
             setLoading(false);
+            setTimeout(() => initScrollAnimations(), 60);
             return;
           }
         } catch {
@@ -154,6 +156,7 @@ export default function GithubDashboard() {
         setTotalForks(forks);
         setCalendar(calendarData);
         setContributionsConfigured(isConfigured);
+        setTimeout(() => initScrollAnimations(), 60);
 
         // Cache in session storage
         sessionStorage.setItem(
@@ -180,7 +183,7 @@ export default function GithubDashboard() {
   }, []);
 
   const getIntensityClass = (count: number) => {
-    if (count === 0) return 'bg-[var(--color-muted)] dark:bg-[#18181b] border border-[var(--color-border)]/50';
+    if (count === 0) return 'bg-[#ebedf0] dark:bg-[#161b22] border border-[var(--color-border)]/40';
     if (count <= 2) return 'bg-[#9be9a8] dark:bg-[#0e4429]';
     if (count <= 5) return 'bg-[#40c463] dark:bg-[#006d32]';
     if (count <= 9) return 'bg-[#30a14e] dark:bg-[#26a641]';
@@ -241,30 +244,30 @@ export default function GithubDashboard() {
   return (
     <div className="space-y-12 sm:space-y-16 animate-fade-in">
       {/* Section A: Overview Metrics */}
-      <section className="space-y-4">
+      <section className="space-y-4" data-animate="stagger">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          <div className="p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs hover:border-[var(--color-primary)]/30 transition-colors">
+          <div data-animate-item className="p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs hover:border-[var(--color-primary)]/30 transition-colors">
             <span className="text-xs text-[var(--color-secondary)] font-mono block">Public Repositories</span>
             <span className="text-3xl sm:text-4xl font-normal tracking-tight text-[var(--color-primary)] mt-1.5 block">
               {profile?.public_repos ?? repos.length}
             </span>
           </div>
 
-          <div className="p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs hover:border-[var(--color-primary)]/30 transition-colors">
+          <div data-animate-item className="p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs hover:border-[var(--color-primary)]/30 transition-colors">
             <span className="text-xs text-[var(--color-secondary)] font-mono block">Total Stars</span>
             <span className="text-3xl sm:text-4xl font-normal tracking-tight text-[var(--color-primary)] mt-1.5 block">
               {totalStars}
             </span>
           </div>
 
-          <div className="p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs hover:border-[var(--color-primary)]/30 transition-colors">
+          <div data-animate-item className="p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs hover:border-[var(--color-primary)]/30 transition-colors">
             <span className="text-xs text-[var(--color-secondary)] font-mono block">Total Forks</span>
             <span className="text-3xl sm:text-4xl font-normal tracking-tight text-[var(--color-primary)] mt-1.5 block">
               {totalForks}
             </span>
           </div>
 
-          <div className="p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs hover:border-[var(--color-primary)]/30 transition-colors">
+          <div data-animate-item className="p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs hover:border-[var(--color-primary)]/30 transition-colors">
             <span className="text-xs text-[var(--color-secondary)] font-mono block">Languages Used</span>
             <span className="text-3xl sm:text-4xl font-normal tracking-tight text-[var(--color-primary)] mt-1.5 block">
               {languages.length}
@@ -274,7 +277,7 @@ export default function GithubDashboard() {
       </section>
 
       {/* Section B: Genuine GitHub Contribution Heatmap */}
-      <section className="p-6 sm:p-8 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs space-y-6">
+      <section data-animate="fade-up" className="p-6 sm:p-8 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--color-border)]">
           <div className="space-y-1">
             <h2 className="text-base sm:text-lg font-normal tracking-tight text-[var(--color-primary)] flex items-center gap-2">
@@ -318,7 +321,7 @@ export default function GithubDashboard() {
               {/* Legend */}
               <div className="hidden sm:flex items-center gap-1.5 text-[11px]">
                 <span>Less</span>
-                <span className="w-3 h-3 rounded-[2px] bg-[var(--color-muted)] dark:bg-[#18181b] border border-[var(--color-border)]/50" />
+                <span className="w-3 h-3 rounded-[2px] bg-[#ebedf0] dark:bg-[#161b22] border border-[var(--color-border)]/50" />
                 <span className="w-3 h-3 rounded-[2px] bg-[#9be9a8] dark:bg-[#0e4429]" />
                 <span className="w-3 h-3 rounded-[2px] bg-[#40c463] dark:bg-[#006d32]" />
                 <span className="w-3 h-3 rounded-[2px] bg-[#30a14e] dark:bg-[#26a641]" />
@@ -341,11 +344,15 @@ export default function GithubDashboard() {
 
                 {/* Day Grid with Weekday Labels */}
                 <div className="flex gap-1 items-start">
-                  {/* Weekday indicators (Mon, Wed, Fri) */}
-                  <div className="flex flex-col gap-1 pr-2 text-[10px] font-mono text-[var(--color-secondary)]/70 text-right w-6 shrink-0">
-                    <span className="h-3 leading-3 mt-[16px]">Mon</span>
-                    <span className="h-3 leading-3 mt-[8px]">Wed</span>
-                    <span className="h-3 leading-3 mt-[8px]">Fri</span>
+                  {/* Weekday indicators (Mon, Wed, Fri) aligned 1:1 with grid rows */}
+                  <div className="flex flex-col gap-[3.5px] pr-2 text-[10px] font-mono text-[var(--color-secondary)]/70 text-right w-6 shrink-0 select-none">
+                    <span className="w-full h-3 sm:h-3.5 invisible" aria-hidden="true">Sun</span>
+                    <span className="w-full h-3 sm:h-3.5 flex items-center justify-end">Mon</span>
+                    <span className="w-full h-3 sm:h-3.5 invisible" aria-hidden="true">Tue</span>
+                    <span className="w-full h-3 sm:h-3.5 flex items-center justify-end">Wed</span>
+                    <span className="w-full h-3 sm:h-3.5 invisible" aria-hidden="true">Thu</span>
+                    <span className="w-full h-3 sm:h-3.5 flex items-center justify-end">Fri</span>
+                    <span className="w-full h-3 sm:h-3.5 invisible" aria-hidden="true">Sat</span>
                   </div>
 
                   {/* 53 Columns of Weeks */}
@@ -417,7 +424,7 @@ export default function GithubDashboard() {
 
       {/* Section C: Language Distribution */}
       {languages.length > 0 && (
-        <section className="space-y-5 p-6 sm:p-8 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs">
+        <section data-animate="fade-up" className="space-y-5 p-6 sm:p-8 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-normal tracking-tight text-[var(--color-primary)]">
               Language Distribution
@@ -461,7 +468,7 @@ export default function GithubDashboard() {
       )}
 
       {/* Section D: Recently Updated Repositories (3 Columns on Desktop) */}
-      <section className="space-y-6">
+      <section className="space-y-6" data-animate="stagger">
         <div className="flex items-center justify-between pb-2 border-b border-[var(--color-border)]">
           <div>
             <h2 className="text-lg font-normal tracking-tight text-[var(--color-primary)]">
@@ -489,6 +496,7 @@ export default function GithubDashboard() {
               href={repo.html_url}
               target="_blank"
               rel="noopener noreferrer"
+              data-animate-item
               className="group block p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-primary)]/40 transition-all shadow-2xs flex flex-col justify-between"
             >
               <div>

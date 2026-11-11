@@ -59,5 +59,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://sanchitm
       <slot />
     </main>
     <Footer />
+
+    <script>
+      import { initScrollAnimations } from '../scripts/scrollAnimations';
+      initScrollAnimations();
+      document.addEventListener('astro:page-load', initScrollAnimations);
+    </script>
   </body>
 </html>

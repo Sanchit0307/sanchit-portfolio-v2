@@ -14,13 +14,15 @@ import { VERIFIED_PROJECTS } from '../data/siteData';
     description="A collection of projects I've built, from problem-solving ideas to real-world applications."
   />
 
-  <div class="space-y-10 sm:space-y-12">
+  <div class="space-y-10 sm:space-y-12" data-animate="stagger">
     {VERIFIED_PROJECTS.map((project, index) => (
-      <ProjectCard
-        project={project}
-        priority={index === 0}
-        class={`stagger-${index + 1}`}
-      />
+      <div data-animate-item>
+        <ProjectCard
+          project={project}
+          priority={index === 0}
+          class={`stagger-${index + 1}`}
+        />
+      </div>
     ))}
   </div>
 </BaseLayout>

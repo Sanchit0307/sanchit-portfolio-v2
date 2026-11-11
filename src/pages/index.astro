@@ -18,7 +18,7 @@ const featuredProjects = VERIFIED_PROJECTS.filter((p) => p.featured);
     </div>
 
     <!-- Hero Section with Expansive Desktop Proportions -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center" data-animate="fade-up">
       <div class="lg:col-span-7 xl:col-span-7 space-y-6 sm:space-y-8">
         <h1 class="text-3xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-[var(--color-primary)] leading-[1.08]">
           {PERSONAL_INFO.role}
@@ -77,7 +77,7 @@ const featuredProjects = VERIFIED_PROJECTS.filter((p) => p.featured);
     </div>
 
     <!-- Featured Work Section -->
-    <section class="space-y-8 pt-10 border-t border-[var(--color-border)]">
+    <section class="space-y-8 pt-10 border-t border-[var(--color-border)]" data-animate="fade-up">
       <div class="flex items-center justify-between text-xs sm:text-sm">
         <div class="flex items-center gap-2 font-mono text-[var(--color-secondary)]">
           <span>/ 01</span>
@@ -89,9 +89,11 @@ const featuredProjects = VERIFIED_PROJECTS.filter((p) => p.featured);
         </a>
       </div>
 
-      <div class="space-y-8 sm:space-y-10">
+      <div class="space-y-8 sm:space-y-10" data-animate="stagger">
         {featuredProjects.map((project, index) => (
-          <ProjectCard project={project} priority={index === 0} class={`stagger-${index + 1}`} />
+          <div data-animate-item>
+            <ProjectCard project={project} priority={index === 0} class={`stagger-${index + 1}`} />
+          </div>
         ))}
       </div>
     </section>

@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *, .dark, .dark *));
+
 @import "@fontsource/geist-sans/400.css";
 @import "@fontsource/geist-sans/500.css";
 @import "@fontsource/geist-sans/600.css";
@@ -305,5 +307,15 @@ textarea:focus-visible {
     animation-iteration-count: 1 !important;
     transition-duration: 0.001s !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* Scroll-triggered reveal states */
+@media (prefers-reduced-motion: no-preference) {
+  html.motion-ready [data-animate="fade-up"]:not(.is-revealed),
+  html.motion-ready [data-animate="stagger"] [data-animate-item]:not(.is-revealed) {
+    opacity: 0;
+    transform: translateY(16px);
+    will-change: opacity, transform;
   }
 }

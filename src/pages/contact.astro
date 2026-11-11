@@ -16,7 +16,7 @@ import { PERSONAL_INFO } from '../data/siteData';
 
   <div class="space-y-12">
     <!-- Main Email Headline -->
-    <div>
+    <div data-animate="fade-up">
       <a
         href={`mailto:${PERSONAL_INFO.email}`}
         class="text-2xl sm:text-4xl md:text-5xl font-medium tracking-tight text-[var(--color-primary)] hover:opacity-80 transition-opacity inline-flex items-center gap-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded"
@@ -27,7 +27,7 @@ import { PERSONAL_INFO } from '../data/siteData';
     </div>
 
     <!-- Verified Action Buttons Row -->
-    <div class="flex flex-wrap items-center gap-4">
+    <div class="flex flex-wrap items-center gap-4" data-animate="fade-up">
       <a
         href={PERSONAL_INFO.github}
         target="_blank"
@@ -66,6 +66,8 @@ import { PERSONAL_INFO } from '../data/siteData';
     </div>
 
     <!-- Interactive Contact Form -->
-    <ContactForm client:load />
+    <div data-animate="fade-up">
+      <ContactForm client:load />
+    </div>
   </div>
 </BaseLayout>

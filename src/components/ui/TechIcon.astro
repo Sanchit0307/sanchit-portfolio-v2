@@ -16,6 +16,9 @@ interface Props {
 }
 
 const { name } = Astro.props;
+
+// Extract JS letter glyphs (excluding outer 24x24 rect) from Simple Icons
+const jsLetterPath = 'M' + siJavascript.path.replace(/^M0 0h24v24H0V0zm?/, '');
 ---
 
 {name === 'HTML5' || name === 'HTML' ? (
@@ -27,13 +30,13 @@ const { name } = Astro.props;
     <path fill="#1572B6" d={siCss3.path} />
   </svg>
 ) : name === 'JavaScript' ? (
-  <svg viewBox="0 0 24 24" class="w-7 h-7 rounded-sm transition-transform duration-200 group-hover:scale-110" aria-label="JavaScript">
-    <rect width="24" height="24" rx="3" fill="#F7DF1E" />
-    <path fill="#000000" d={siJavascript.path} />
+  <svg viewBox="0 0 24 24" class="w-7 h-7 rounded-sm transition-transform duration-200 group-hover:scale-110 shadow-2xs" aria-label="JavaScript">
+    <rect width="24" height="24" rx="2.5" fill="#F7DF1E" />
+    <path fill="#000000" d={jsLetterPath} />
   </svg>
 ) : name === 'React' ? (
   <svg viewBox="0 0 24 24" class="w-7 h-7 transition-transform duration-200 group-hover:scale-110" aria-label="React">
-    <path fill="#61DAFB" d={siReact.path} />
+    <path class="fill-[#087ea4] dark:fill-[#61DAFB] transition-colors" d={siReact.path} />
   </svg>
 ) : name === 'Tailwind' || name === 'Tailwind CSS' ? (
   <svg viewBox="0 0 24 24" class="w-7 h-7 transition-transform duration-200 group-hover:scale-110" aria-label="Tailwind CSS">
@@ -78,7 +81,7 @@ const { name } = Astro.props;
   </svg>
 ) : name === 'GitHub' ? (
   <svg viewBox="0 0 24 24" class="w-7 h-7 transition-transform duration-200 group-hover:scale-110" aria-label="GitHub">
-    <path class="fill-[#181717] dark:fill-[#FFFFFF] transition-colors" d={siGithub.path} />
+    <path class="fill-[#171717] dark:fill-[#F3F4F6] transition-colors" d={siGithub.path} />
   </svg>
 ) : name === 'VS Code' ? (
   <svg viewBox="0 0 128 128" class="w-7 h-7 transition-transform duration-200 group-hover:scale-110" aria-label="Visual Studio Code">
