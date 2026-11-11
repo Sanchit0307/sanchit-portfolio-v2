@@ -15,7 +15,7 @@ import {
   <div class="space-y-24 sm:space-y-32">
     <!-- Top Identity / Meta Bar -->
     <div class="flex items-center justify-between text-xs sm:text-sm text-[var(--color-secondary)] pb-6 border-b border-[var(--color-border)]">
-      <span class="font-medium text-[var(--color-primary)] text-sm sm:text-base">{PERSONAL_INFO.name}</span>
+      <span class="font-mono text-xs text-[var(--color-secondary)] tracking-widest uppercase">PORTFOLIO</span>
       <div class="flex items-center gap-2 font-mono text-xs sm:text-sm">
         <span class="text-[var(--color-secondary)]">/ {PERSONAL_INFO.branch}</span>
         <span>{PERSONAL_INFO.batch}</span>
@@ -23,22 +23,32 @@ import {
     </div>
 
     <!-- 1. HERO SECTION -->
-    <section id="hero" class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-      <div class="lg:col-span-7 xl:col-span-7 space-y-6 sm:space-y-8">
+    <section id="hero" class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+      <div class="lg:col-span-7 xl:col-span-7 flex flex-col justify-center space-y-5 sm:space-y-6">
+        <!-- 1. Eyebrow text -->
         <div data-hero-animate>
-          <span class="text-xs sm:text-sm font-mono uppercase tracking-wider text-[var(--color-secondary)] block mb-2">
-            Engineering Portfolio
+          <span class="text-xs sm:text-sm font-mono tracking-widest uppercase text-[var(--color-secondary)] font-medium block">
+            HEY THERE, I'M
           </span>
-          <h1 class="text-3xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-[var(--color-primary)] leading-[1.08]">
-            {PERSONAL_INFO.role}
-          </h1>
         </div>
 
-        <p data-hero-animate class="text-base sm:text-lg lg:text-xl text-[var(--color-secondary)] leading-relaxed max-w-2xl">
+        <!-- 2. Oversized Name Heading & 3. Professional Introduction -->
+        <div data-hero-animate class="space-y-3 sm:space-y-4">
+          <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] xl:text-[6rem] font-bold tracking-[-0.04em] text-[var(--color-primary)] leading-[0.95]">
+            Sanchit Marwah.
+          </h1>
+
+          <p class="text-2xl sm:text-3xl md:text-4xl lg:text-[3.25rem] xl:text-[3.5rem] font-normal tracking-tight text-[var(--color-secondary)] leading-[1.08]">
+            Computer Science<br class="hidden sm:inline" /> Student & Web Developer.
+          </p>
+        </div>
+
+        <!-- 4. Supporting paragraph -->
+        <p data-hero-animate class="text-base sm:text-lg lg:text-xl text-[var(--color-secondary)] leading-relaxed max-w-2xl pt-1">
           {PERSONAL_INFO.bio}
         </p>
 
-        <!-- Primary Action Controls -->
+        <!-- 5. Primary Action Controls -->
         <div data-hero-animate class="flex flex-wrap items-center gap-3.5 pt-2">
           <a href="#projects" class="btn-primary">
             <span>View Projects</span>
