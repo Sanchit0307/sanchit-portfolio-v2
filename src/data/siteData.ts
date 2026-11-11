@@ -28,10 +28,14 @@ export interface Project {
   id: string;
   num: string;
   title: string;
+  type?: 'Individual' | 'Collaborative';
+  role?: string;
   description: string;
   tags: string[];
   link?: string;
-  image?: string;
+  github?: string;
+  image: string;
+  featured?: boolean;
 }
 
 export const VERIFIED_PROJECTS: Project[] = [
@@ -39,16 +43,36 @@ export const VERIFIED_PROJECTS: Project[] = [
     id: 'delhi-ncr-complaint-portal',
     num: '01',
     title: 'Delhi NCR Complaint Portal',
-    description: 'A web platform to register and track civic complaints across Delhi NCR.',
-    tags: ['React', 'Node.js', 'Supabase'],
+    type: 'Individual',
+    description: 'An AI-powered citizen grievance redressal platform enabling residents across Delhi NCR to draft legally sound formal representations routed directly to concerned authorities.',
+    tags: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Google Gemini'],
+    link: 'https://delhicomplaintportal.vercel.app',
+    github: 'https://github.com/Sanchit0307/delhi-complaint-portal',
+    image: '/images/projects/delhi-complaint-portal.png',
+    featured: true,
   },
   {
-    id: 'kisan-setu',
+    id: 'campusvoice',
     num: '02',
-    title: 'Kisan Setu',
-    description: 'A smart procurement-center management platform to reduce congestion for farmers.',
-    tags: ['React', 'JavaScript', 'Firebase'],
+    title: 'CampusVoice',
+    type: 'Individual',
+    description: 'A student ideas and suggestions platform empowering campus communities to propose initiatives, discover suggestions, and track ideas through their review and implementation lifecycle.',
+    tags: ['React', 'JavaScript', 'Firebase', 'Tailwind CSS'],
+    github: 'https://github.com/Sanchit0307/campus-ideas-portal',
+    image: '/images/projects/campusvoice.png',
+    featured: true,
+  },
+  {
+    id: 'annagati',
+    num: '03',
+    title: 'Annagati',
+    type: 'Collaborative',
+    role: 'Frontend Development & Authorization',
+    description: 'A smart crop procurement and mandi queue management platform to reduce congestion for farmers with digital token issuing, slot booking, and MSP workflow tracking.',
+    tags: ['React', 'JavaScript', 'Firebase', 'Tailwind CSS'],
     link: 'https://aryan689t.github.io/KisanSetu_V1/',
+    image: '/images/projects/annagati.png',
+    featured: true,
   },
 ];
 
@@ -110,4 +134,3 @@ export const VERIFIED_EDUCATION: EducationItem[] = [
     location: 'Paschim Vihar, New Delhi',
   },
 ];
-
