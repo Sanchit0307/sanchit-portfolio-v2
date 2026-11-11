@@ -11,6 +11,7 @@ interface Props {
 
 const { title, description = PERSONAL_INFO.bio } = Astro.props;
 const pageTitle = title ? `${title} — ${PERSONAL_INFO.name}` : `${PERSONAL_INFO.name} — ${PERSONAL_INFO.role}`;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://sanchitmarwah.dev');
 ---
 
 <!doctype html>
@@ -22,6 +23,19 @@ const pageTitle = title ? `${title} — ${PERSONAL_INFO.name}` : `${PERSONAL_INF
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
+    <meta name="author" content={PERSONAL_INFO.name} />
+
+    <!-- Open Graph / Social Sharing Metadata -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:site_name" content={PERSONAL_INFO.name} />
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
 
     <!-- Avoid theme flicker script -->
     <script is:inline>
