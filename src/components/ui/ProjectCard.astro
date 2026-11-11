@@ -11,34 +11,36 @@ const { project, priority = false } = Astro.props;
 
 <article class="group border border-[var(--color-border)] rounded-xl bg-[var(--color-surface)] p-5 sm:p-6 transition-all duration-300 hover:border-[var(--color-primary)]/40 shadow-xs">
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
-    <!-- Left Column: 16:10 Image Container -->
+    <!-- Left Column: 16:10 Image Container with Original Colors & object-contain -->
     <div class="lg:col-span-6 w-full">
-      <div class="relative w-full aspect-[16/10] overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-muted)]">
+      <div class="relative w-full aspect-[16/10] overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-muted)] flex items-center justify-center p-2 sm:p-3">
         {project.link ? (
           <a
             href={project.link}
             target="_blank"
             rel="noopener noreferrer"
-            class="block w-full h-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)]"
+            class="block w-full h-full flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded"
             tabindex="-1"
             aria-hidden="true"
           >
             <img
               src={project.image}
               alt={`${project.title} interface preview`}
-              class="w-full h-full object-cover object-top grayscale hover:grayscale-0 transition-all duration-500 ease-in-out group-hover:grayscale-0 group-hover:scale-[1.02]"
+              class="w-full h-full object-contain object-center rounded transition-transform duration-300 ease-out group-hover:scale-[1.01]"
               loading={priority ? 'eager' : 'lazy'}
               decoding="async"
             />
           </a>
         ) : (
-          <img
-            src={project.image}
-            alt={`${project.title} interface preview`}
-            class="w-full h-full object-cover object-top grayscale hover:grayscale-0 transition-all duration-500 ease-in-out group-hover:grayscale-0 group-hover:scale-[1.02]"
-            loading={priority ? 'eager' : 'lazy'}
-            decoding="async"
-          />
+          <div class="w-full h-full flex items-center justify-center">
+            <img
+              src={project.image}
+              alt={`${project.title} interface preview`}
+              class="w-full h-full object-contain object-center rounded transition-transform duration-300 ease-out group-hover:scale-[1.01]"
+              loading={priority ? 'eager' : 'lazy'}
+              decoding="async"
+            />
+          </div>
         )}
       </div>
     </div>
