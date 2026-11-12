@@ -43,8 +43,8 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
             <span>{item.label}</span>
             <span
               class:list={[
-                'nav-indicator absolute -bottom-[21px] sm:-bottom-[29px] left-0 right-0 h-[2px] bg-[var(--color-primary)] rounded-full transition-opacity',
-                isActive ? 'block opacity-100' : 'hidden opacity-0'
+                'nav-indicator absolute -bottom-[21px] sm:-bottom-[29px] left-0 right-0 h-[2px] bg-[var(--color-primary)] rounded-full transition-all duration-250 ease-out pointer-events-none origin-center',
+                isActive ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-50'
               ]}
               aria-hidden="true"
             />
@@ -145,8 +145,8 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
         link.setAttribute('aria-current', 'page');
         const ind = link.querySelector('.nav-indicator');
         if (ind) {
-          ind.classList.remove('hidden', 'opacity-0');
-          ind.classList.add('block', 'opacity-100');
+          ind.classList.remove('opacity-0', 'scale-x-50');
+          ind.classList.add('opacity-100', 'scale-x-100');
         }
       } else {
         link.classList.remove('font-medium', 'text-[var(--color-primary)]');
@@ -154,8 +154,8 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
         link.removeAttribute('aria-current');
         const ind = link.querySelector('.nav-indicator');
         if (ind) {
-          ind.classList.add('hidden', 'opacity-0');
-          ind.classList.remove('block', 'opacity-100');
+          ind.classList.remove('opacity-100', 'scale-x-100');
+          ind.classList.add('opacity-0', 'scale-x-50');
         }
       }
     });
