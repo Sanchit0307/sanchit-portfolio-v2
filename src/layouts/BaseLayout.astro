@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
 import { PERSONAL_INFO } from '../data/siteData';
@@ -12,6 +13,40 @@ interface Props {
 const { title, description = PERSONAL_INFO.bio } = Astro.props;
 const pageTitle = title ? `${title} — ${PERSONAL_INFO.name}` : `${PERSONAL_INFO.name} — ${PERSONAL_INFO.role}`;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://sanchitmarwah.dev');
+
+// Fluid, restrained transition conforming to Vercel Minimal spec:
+// Exit: subtle opacity transition (180ms)
+// Enter: opacity + very subtle vertical movement (8px, 280ms ease-out)
+const pageTransition = {
+  forwards: {
+    old: {
+      name: 'pageExit',
+      duration: '180ms',
+      easing: 'cubic-bezier(0.4, 0, 1, 1)',
+      fillMode: 'both',
+    },
+    new: {
+      name: 'pageEnter',
+      duration: '280ms',
+      easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+      fillMode: 'both',
+    },
+  },
+  backwards: {
+    old: {
+      name: 'pageExit',
+      duration: '180ms',
+      easing: 'cubic-bezier(0.4, 0, 1, 1)',
+      fillMode: 'both',
+    },
+    new: {
+      name: 'pageEnter',
+      duration: '280ms',
+      easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+      fillMode: 'both',
+    },
+  },
+};
 ---
 
 <!doctype html>
@@ -37,9 +72,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://sanchitm
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={description} />
 
-    <!-- Avoid theme flicker script -->
+    <ClientRouter />
+
+    <!-- Avoid theme flicker script (runs on initial load and View Transitions swap) -->
     <script is:inline>
-      (function() {
+      function applyTheme() {
         const stored = typeof localStorage !== 'undefined' ? localStorage.getItem('theme') : null;
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const theme = stored ? stored : (prefersDark ? 'dark' : 'light');
@@ -50,12 +87,18 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://sanchitm
           document.documentElement.classList.remove('dark');
           document.documentElement.dataset.theme = 'light';
         }
-      })();
+      }
+      applyTheme();
+      document.addEventListener('astro:after-swap', applyTheme);
     </script>
   </head>
   <body class="flex flex-col min-h-screen">
     <Header />
-    <main class="flex-1 w-full max-w-[1340px] mx-auto px-6 sm:px-8 lg:px-12 py-10 sm:py-16 lg:py-20">
+    <main
+      id="main-content"
+      transition:animate={pageTransition}
+      class="flex-1 w-full max-w-[1340px] mx-auto px-6 sm:px-8 lg:px-12 py-10 sm:py-16 lg:py-20"
+    >
       <slot />
     </main>
     <Footer />

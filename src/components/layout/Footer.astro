@@ -4,7 +4,11 @@ import { PERSONAL_INFO } from '../../data/siteData';
 const currentYear = new Date().getFullYear();
 ---
 
-<footer class="w-full border-t border-[var(--color-border)] mt-auto py-10 sm:py-12 bg-[var(--bg-page)] transition-colors">
+<footer
+  id="main-footer"
+  transition:persist="main-footer"
+  class="w-full border-t border-[var(--color-border)] mt-auto py-10 sm:py-12 bg-[var(--bg-page)] transition-colors"
+>
   <div class="max-w-[1340px] mx-auto px-6 sm:px-8 lg:px-12 flex flex-col md:flex-row items-center justify-between gap-6 text-xs text-[var(--color-secondary)]">
     <!-- Identity and Branch -->
     <div class="flex flex-wrap items-center justify-center md:justify-start gap-2.5">

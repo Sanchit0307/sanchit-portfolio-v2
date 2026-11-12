@@ -9,22 +9,34 @@ export function initScrollAnimations() {
     document.querySelectorAll<HTMLElement>('[data-animate], [data-animate-item], [data-hero-animate]').forEach((el) => {
       el.style.opacity = '1';
       el.style.transform = 'none';
+      el.classList.add('is-revealed');
     });
     return;
   }
 
   document.documentElement.classList.add('motion-ready');
 
-  // 1. Hero Staggered Entrance (immediate upon mount, restrained and instant)
+  // Helper: check if element is already within the visible viewport on mount/page-enter
+  const isElementInViewport = (el: HTMLElement) => {
+    const rect = el.getBoundingClientRect();
+    return rect.top < window.innerHeight && rect.bottom > 0;
+  };
+
+  // 1. Hero Staggered Entrance (on homepage)
   const heroElements = document.querySelectorAll<HTMLElement>('[data-hero-animate]');
   if (heroElements.length > 0) {
     heroElements.forEach((el, index) => {
+      if (el.classList.contains('is-revealed')) {
+        el.style.opacity = '';
+        el.style.transform = '';
+        return;
+      }
       animate(
         el,
         { opacity: [0, 1], y: [6, 0] },
         {
           duration: 0.35,
-          delay: index * 0.05,
+          delay: index * 0.04,
           easing: [0.16, 1, 0.3, 1],
         }
       ).finished.then(() => {
@@ -43,7 +55,7 @@ export function initScrollAnimations() {
       { opacity: [0, 1], scale: [0.98, 1] },
       {
         duration: 0.45,
-        delay: 0.1,
+        delay: 0.08,
         easing: [0.16, 1, 0.3, 1],
       }
     ).finished.then(() => {
@@ -53,9 +65,17 @@ export function initScrollAnimations() {
     });
   }
 
-  // 3. Scroll-triggered fade-up sections (minimal vertical displacement)
+  // 3. Scroll-triggered fade-up sections
   const fadeUpElements = document.querySelectorAll<HTMLElement>('[data-animate="fade-up"]:not(.is-revealed)');
   fadeUpElements.forEach((el) => {
+    // If element is already in the viewport upon entering page, reveal immediately to enter fluidly with page transition
+    if (isElementInViewport(el)) {
+      el.classList.add('is-revealed');
+      el.style.opacity = '';
+      el.style.transform = '';
+      return;
+    }
+
     inView(
       el,
       () => {
@@ -76,13 +96,24 @@ export function initScrollAnimations() {
   // 4. Staggered containers & card groups
   const staggerContainers = document.querySelectorAll<HTMLElement>('[data-animate="stagger"]:not(.is-revealed)');
   staggerContainers.forEach((container) => {
+    // If container is already in viewport on mount, reveal immediately so cards enter naturally with the main page transition
+    if (isElementInViewport(container)) {
+      container.classList.add('is-revealed');
+      container.querySelectorAll<HTMLElement>('[data-animate-item]').forEach((item) => {
+        item.classList.add('is-revealed');
+        item.style.opacity = '';
+        item.style.transform = '';
+      });
+      return;
+    }
+
     inView(
       container,
       () => {
         const items = container.querySelectorAll<HTMLElement>('[data-animate-item]:not(.is-revealed)');
         if (items.length > 0) {
           items.forEach((item, index) => {
-            const delay = Math.min(index * 0.04, 0.18);
+            const delay = Math.min(index * 0.04, 0.16);
             animate(
               item,
               { opacity: [0, 1], y: [8, 0] },

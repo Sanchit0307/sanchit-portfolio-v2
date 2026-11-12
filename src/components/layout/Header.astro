@@ -7,6 +7,7 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
 
 <header
   id="main-header"
+  transition:persist="main-header"
   class="sticky top-0 z-50 w-full border-b border-[var(--color-border)] bg-[var(--bg-page)]/85 backdrop-blur-md transition-colors"
 >
   <div class="max-w-[1340px] mx-auto px-6 sm:px-8 lg:px-12 h-16 sm:h-20 flex items-center justify-between">
@@ -24,11 +25,13 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
       {NAV_ITEMS.map((item) => {
         const isExact = pathname === item.href;
         const isPrefix = item.href !== '/' && pathname.startsWith(item.href);
-        const isActive = isExact || isPrefix;
+        const isDashboardMatch = (item.href === '/github' && (pathname === '/github' || pathname === '/dashboard'));
+        const isActive = isExact || isPrefix || isDashboardMatch;
 
         return (
           <a
             href={item.href}
+            data-href={item.href}
             class:list={[
               'nav-link text-xs lg:text-sm transition-colors py-1.5 relative focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded',
               isActive
@@ -38,12 +41,13 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
             aria-current={isActive ? 'page' : undefined}
           >
             <span>{item.label}</span>
-            {isActive && (
-              <span
-                class="absolute -bottom-[21px] sm:-bottom-[29px] left-0 right-0 h-[2px] bg-[var(--color-primary)] rounded-full"
-                aria-hidden="true"
-              />
-            )}
+            <span
+              class:list={[
+                'nav-indicator absolute -bottom-[21px] sm:-bottom-[29px] left-0 right-0 h-[2px] bg-[var(--color-primary)] rounded-full transition-opacity',
+                isActive ? 'block opacity-100' : 'hidden opacity-0'
+              ]}
+              aria-hidden="true"
+            />
           </a>
         );
       })}
@@ -100,13 +104,15 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
       {NAV_ITEMS.map((item) => {
         const isExact = pathname === item.href;
         const isPrefix = item.href !== '/' && pathname.startsWith(item.href);
-        const isActive = isExact || isPrefix;
+        const isDashboardMatch = (item.href === '/github' && (pathname === '/github' || pathname === '/dashboard'));
+        const isActive = isExact || isPrefix || isDashboardMatch;
 
         return (
           <a
             href={item.href}
+            data-href={item.href}
             class:list={[
-              'text-sm py-2 px-3 rounded-lg transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)]',
+              'mobile-nav-link text-sm py-2 px-3 rounded-lg transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)]',
               isActive
                 ? 'font-medium text-[var(--color-primary)] bg-[var(--color-muted)]'
                 : 'text-[var(--color-secondary)] hover:text-[var(--color-primary)] hover:bg-[var(--color-muted)]/50'
@@ -122,6 +128,58 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
 </header>
 
 <script>
+  function updateNav() {
+    const rawPath = window.location.pathname.replace(/\/$/, '') || '/';
+
+    // Update Desktop Nav
+    document.querySelectorAll<HTMLAnchorElement>('#main-header .nav-link').forEach((link) => {
+      const href = (link.getAttribute('data-href') || link.getAttribute('href') || '').replace(/\/$/, '') || '/';
+      const isExact = rawPath === href;
+      const isPrefix = href !== '/' && rawPath.startsWith(href);
+      const isDashboardMatch = (href === '/github' && (rawPath === '/github' || rawPath === '/dashboard'));
+      const isActive = isExact || isPrefix || isDashboardMatch;
+
+      if (isActive) {
+        link.classList.add('font-medium', 'text-[var(--color-primary)]');
+        link.classList.remove('text-[var(--color-secondary)]');
+        link.setAttribute('aria-current', 'page');
+        const ind = link.querySelector('.nav-indicator');
+        if (ind) {
+          ind.classList.remove('hidden', 'opacity-0');
+          ind.classList.add('block', 'opacity-100');
+        }
+      } else {
+        link.classList.remove('font-medium', 'text-[var(--color-primary)]');
+        link.classList.add('text-[var(--color-secondary)]');
+        link.removeAttribute('aria-current');
+        const ind = link.querySelector('.nav-indicator');
+        if (ind) {
+          ind.classList.add('hidden', 'opacity-0');
+          ind.classList.remove('block', 'opacity-100');
+        }
+      }
+    });
+
+    // Update Mobile Nav
+    document.querySelectorAll<HTMLAnchorElement>('#main-header .mobile-nav-link').forEach((link) => {
+      const href = (link.getAttribute('data-href') || link.getAttribute('href') || '').replace(/\/$/, '') || '/';
+      const isExact = rawPath === href;
+      const isPrefix = href !== '/' && rawPath.startsWith(href);
+      const isDashboardMatch = (href === '/github' && (rawPath === '/github' || rawPath === '/dashboard'));
+      const isActive = isExact || isPrefix || isDashboardMatch;
+
+      if (isActive) {
+        link.classList.add('font-medium', 'text-[var(--color-primary)]', 'bg-[var(--color-muted)]');
+        link.classList.remove('text-[var(--color-secondary)]');
+        link.setAttribute('aria-current', 'page');
+      } else {
+        link.classList.remove('font-medium', 'text-[var(--color-primary)]', 'bg-[var(--color-muted)]');
+        link.classList.add('text-[var(--color-secondary)]');
+        link.removeAttribute('aria-current');
+      }
+    });
+  }
+
   function setupHeader() {
     const menuBtn = document.getElementById('mobile-menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
@@ -139,16 +197,19 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
 
       // Close menu when a link is clicked
       mobileMenu.querySelectorAll('a').forEach((link) => {
-        link.addEventListener('click', () => {
+        link.onclick = () => {
           menuBtn.setAttribute('aria-expanded', 'false');
           mobileMenu.classList.add('hidden');
           openIcon.classList.remove('hidden');
           closeIcon.classList.add('hidden');
-        });
+        };
       });
     }
+
+    updateNav();
   }
 
   setupHeader();
   document.addEventListener('astro:page-load', setupHeader);
+  document.addEventListener('astro:after-swap', updateNav);
 </script>
