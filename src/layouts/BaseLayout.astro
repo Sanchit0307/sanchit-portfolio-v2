@@ -74,32 +74,40 @@ const pageTransition = {
 
     <ClientRouter />
 
-    <!-- Avoid theme flicker script (runs on initial load and View Transitions swap) -->
+    <!-- Avoid theme flicker script (runs synchronously on initial load and View Transitions swap) -->
     <script is:inline>
-      function applyTheme() {
+      function applyTheme(targetDoc) {
+        const doc = targetDoc || document;
         const stored = typeof localStorage !== 'undefined' ? localStorage.getItem('theme') : null;
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const theme = stored ? stored : (prefersDark ? 'dark' : 'light');
         if (theme === 'dark') {
-          document.documentElement.classList.add('dark');
-          document.documentElement.dataset.theme = 'dark';
+          doc.documentElement.classList.add('dark');
+          doc.documentElement.dataset.theme = 'dark';
+          doc.documentElement.style.colorScheme = 'dark';
         } else {
-          document.documentElement.classList.remove('dark');
-          document.documentElement.dataset.theme = 'light';
+          doc.documentElement.classList.remove('dark');
+          doc.documentElement.dataset.theme = 'light';
+          doc.documentElement.style.colorScheme = 'light';
         }
       }
       applyTheme();
-      document.addEventListener('astro:after-swap', applyTheme);
+      document.addEventListener('astro:before-swap', (ev) => {
+        applyTheme(ev.newDocument);
+      });
+      document.addEventListener('astro:after-swap', () => {
+        applyTheme(document);
+      });
     </script>
   </head>
-  <body class="flex flex-col min-h-screen">
+  <body class="flex flex-col min-h-screen bg-[var(--bg-page)] text-[var(--text-primary)]">
     <Header transition:persist="main-header" />
     <main
       id="main-content"
       data-page-content
       transition:name="page-content"
       transition:animate={pageTransition}
-      class="flex-1 w-full max-w-[1340px] mx-auto px-6 sm:px-8 lg:px-12 py-10 sm:py-16 lg:py-20"
+      class="flex-1 w-full max-w-[1340px] mx-auto px-6 sm:px-8 lg:px-12 py-10 sm:py-16 lg:py-20 bg-[var(--bg-page)]"
     >
       <slot />
     </main>

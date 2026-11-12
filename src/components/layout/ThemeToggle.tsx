@@ -12,10 +12,12 @@ export default function ThemeToggle() {
       setTheme('dark');
       document.documentElement.dataset.theme = 'dark';
       document.documentElement.classList.add('dark');
+      document.documentElement.style.colorScheme = 'dark';
     } else {
       setTheme('light');
       document.documentElement.dataset.theme = 'light';
       document.documentElement.classList.remove('dark');
+      document.documentElement.style.colorScheme = 'light';
     }
   }, []);
 
@@ -25,8 +27,10 @@ export default function ThemeToggle() {
     document.documentElement.dataset.theme = nextTheme;
     if (nextTheme === 'dark') {
       document.documentElement.classList.add('dark');
+      document.documentElement.style.colorScheme = 'dark';
     } else {
       document.documentElement.classList.remove('dark');
+      document.documentElement.style.colorScheme = 'light';
     }
     localStorage.setItem('theme', nextTheme);
   };

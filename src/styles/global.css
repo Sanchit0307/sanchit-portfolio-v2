@@ -24,6 +24,7 @@
 }
 
 :root {
+  color-scheme: light;
   /* Vercel Minimal Tokens */
   --color-primary: #171717;
   --color-secondary: #6b7280;
@@ -45,6 +46,7 @@
 
 :root[data-theme="dark"],
 .dark {
+  color-scheme: dark;
   --color-primary: #f3f4f6;
   --color-secondary: #9ca3af;
   --color-tertiary: #262626;
@@ -70,7 +72,6 @@ html {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 body {
@@ -298,26 +299,37 @@ textarea:focus-visible {
   }
 }
 
+/* View Transition Canvas & Snapshot Backgrounds (Ensures zero dark-mode flash) */
+::view-transition {
+  background-color: var(--bg-page);
+}
+
 /* Explicit View Transition bindings for main page content */
 ::view-transition-old(page-content) {
   animation: 180ms cubic-bezier(0.4, 0, 1, 1) both pageExit !important;
   mix-blend-mode: normal !important;
+  background-color: var(--bg-page) !important;
+  box-shadow: none !important;
 }
 
 ::view-transition-new(page-content) {
   animation: 280ms cubic-bezier(0.16, 1, 0.3, 1) both pageEnter !important;
   mix-blend-mode: normal !important;
+  background-color: var(--bg-page) !important;
+  box-shadow: none !important;
 }
 
 /* Fallback for browsers / environments without native View Transitions */
 [data-astro-transition-fallback="old"] #main-content,
 [data-astro-transition-fallback="old"] [data-page-content] {
   animation: 180ms cubic-bezier(0.4, 0, 1, 1) both pageExit !important;
+  background-color: var(--bg-page) !important;
 }
 
 [data-astro-transition-fallback="new"] #main-content,
 [data-astro-transition-fallback="new"] [data-page-content] {
   animation: 280ms cubic-bezier(0.16, 1, 0.3, 1) both pageEnter !important;
+  background-color: var(--bg-page) !important;
 }
 
 /* Ensure stable document root & prevent full-window crossfade flashes */
