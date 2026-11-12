@@ -36,7 +36,8 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
         const isExact = pathname === item.href;
         const isPrefix = item.href !== '/' && pathname.startsWith(item.href);
         const isDashboardMatch = (item.href === '/github' && (pathname === '/github' || pathname === '/dashboard'));
-        const isActive = isExact || isPrefix || isDashboardMatch;
+        const isJourneyMatch = (item.href === '/achievements' && (pathname === '/achievements' || pathname === '/journey'));
+        const isActive = isExact || isPrefix || isDashboardMatch || isJourneyMatch;
 
         return (
           <a
@@ -115,7 +116,8 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
         const isExact = pathname === item.href;
         const isPrefix = item.href !== '/' && pathname.startsWith(item.href);
         const isDashboardMatch = (item.href === '/github' && (pathname === '/github' || pathname === '/dashboard'));
-        const isActive = isExact || isPrefix || isDashboardMatch;
+        const isJourneyMatch = (item.href === '/achievements' && (pathname === '/achievements' || pathname === '/journey'));
+        const isActive = isExact || isPrefix || isDashboardMatch || isJourneyMatch;
 
         return (
           <a
@@ -147,7 +149,8 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
       const isExact = rawPath === href;
       const isPrefix = href !== '/' && rawPath.startsWith(href);
       const isDashboardMatch = (href === '/github' && (rawPath === '/github' || rawPath === '/dashboard'));
-      const isActive = isExact || isPrefix || isDashboardMatch;
+      const isJourneyMatch = (href === '/achievements' && (rawPath === '/achievements' || rawPath === '/journey'));
+      const isActive = isExact || isPrefix || isDashboardMatch || isJourneyMatch;
 
       if (isActive) {
         link.classList.add('font-medium', 'text-[var(--color-primary)]');
@@ -176,7 +179,8 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
       const isExact = rawPath === href;
       const isPrefix = href !== '/' && rawPath.startsWith(href);
       const isDashboardMatch = (href === '/github' && (rawPath === '/github' || rawPath === '/dashboard'));
-      const isActive = isExact || isPrefix || isDashboardMatch;
+      const isJourneyMatch = (href === '/achievements' && (rawPath === '/achievements' || rawPath === '/journey'));
+      const isActive = isExact || isPrefix || isDashboardMatch || isJourneyMatch;
 
       if (isActive) {
         link.classList.add('font-medium', 'text-[var(--color-primary)]', 'bg-[var(--color-muted)]');
