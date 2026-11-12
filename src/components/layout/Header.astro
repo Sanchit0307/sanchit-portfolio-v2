@@ -10,18 +10,28 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
   transition:persist="main-header"
   class="sticky top-0 z-50 w-full border-b border-[var(--color-border)] bg-[var(--bg-page)]/85 backdrop-blur-md transition-colors"
 >
-  <div class="max-w-[1340px] mx-auto px-6 sm:px-8 lg:px-12 h-16 sm:h-20 flex items-center justify-between">
-    <!-- Brand Mark / Logo -->
-    <a
-      href="/"
-      class="text-base sm:text-lg font-semibold tracking-tight text-[var(--color-primary)] hover:opacity-80 transition-opacity focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded inline-flex items-center gap-1.5"
-      aria-label="Sanchit Marwah - Homepage"
-    >
-      <span>{PERSONAL_INFO.initials}</span>
-    </a>
+  <div class="max-w-[1340px] mx-auto px-6 sm:px-8 lg:px-12 h-16 sm:h-20 grid grid-cols-2 md:grid-cols-3 items-center">
+    <!-- Left Section: Avatar Logo -->
+    <div class="flex items-center justify-start">
+      <a
+        href="/"
+        class="group inline-flex items-center gap-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded-full transition-opacity hover:opacity-85"
+        aria-label="Sanchit Marwah - Homepage"
+      >
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden border border-[var(--color-border)] bg-[var(--color-muted)] shadow-2xs shrink-0 transition-transform duration-200 group-hover:scale-105">
+          <img
+            src="/images/portrait.jpg"
+            alt="Sanchit Marwah"
+            class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+            loading="eager"
+            decoding="async"
+          />
+        </div>
+      </a>
+    </div>
 
-    <!-- Desktop Navigation Links -->
-    <nav class="hidden md:flex items-center gap-6 lg:gap-8" aria-label="Main Navigation">
+    <!-- Centre Section: Navigation Links in one horizontal row -->
+    <nav class="hidden md:flex items-center justify-center gap-6 lg:gap-8" aria-label="Main Navigation">
       {NAV_ITEMS.map((item) => {
         const isExact = pathname === item.href;
         const isPrefix = item.href !== '/' && pathname.startsWith(item.href);
@@ -33,7 +43,7 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
             href={item.href}
             data-href={item.href}
             class:list={[
-              'nav-link text-xs lg:text-sm transition-colors py-1.5 relative focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded',
+              'nav-link text-sm lg:text-[15px] transition-colors py-1.5 relative focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-primary)] rounded',
               isActive
                 ? 'font-medium text-[var(--color-primary)]'
                 : 'text-[var(--color-secondary)] hover:text-[var(--color-primary)]'
@@ -53,8 +63,8 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
       })}
     </nav>
 
-    <!-- Controls (Theme Toggle + Mobile Hamburger) -->
-    <div class="flex items-center gap-2.5 sm:gap-3">
+    <!-- Right Section: Utility Controls -->
+    <div class="flex items-center justify-end gap-2.5 sm:gap-3">
       <ThemeToggle client:load />
 
       <!-- Mobile Menu Button -->
