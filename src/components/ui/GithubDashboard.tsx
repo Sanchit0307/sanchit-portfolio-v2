@@ -247,28 +247,28 @@ export default function GithubDashboard() {
       <section className="space-y-4" data-animate="stagger">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           <div data-animate-item className="p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs hover:border-[var(--color-primary)]/30 transition-colors">
-            <span className="text-xs text-[var(--color-secondary)] font-mono block">Public Repositories</span>
+            <span className="text-xs sm:text-[13px] text-[var(--color-secondary)] font-mono block">Public Repositories</span>
             <span className="text-3xl sm:text-4xl font-normal tracking-tight text-[var(--color-primary)] mt-1.5 block">
               {profile?.public_repos ?? repos.length}
             </span>
           </div>
 
           <div data-animate-item className="p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs hover:border-[var(--color-primary)]/30 transition-colors">
-            <span className="text-xs text-[var(--color-secondary)] font-mono block">Total Stars</span>
+            <span className="text-xs sm:text-[13px] text-[var(--color-secondary)] font-mono block">Total Stars</span>
             <span className="text-3xl sm:text-4xl font-normal tracking-tight text-[var(--color-primary)] mt-1.5 block">
               {totalStars}
             </span>
           </div>
 
           <div data-animate-item className="p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs hover:border-[var(--color-primary)]/30 transition-colors">
-            <span className="text-xs text-[var(--color-secondary)] font-mono block">Total Forks</span>
+            <span className="text-xs sm:text-[13px] text-[var(--color-secondary)] font-mono block">Total Forks</span>
             <span className="text-3xl sm:text-4xl font-normal tracking-tight text-[var(--color-primary)] mt-1.5 block">
               {totalForks}
             </span>
           </div>
 
           <div data-animate-item className="p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs hover:border-[var(--color-primary)]/30 transition-colors">
-            <span className="text-xs text-[var(--color-secondary)] font-mono block">Languages Used</span>
+            <span className="text-xs sm:text-[13px] text-[var(--color-secondary)] font-mono block">Languages Used</span>
             <span className="text-3xl sm:text-4xl font-normal tracking-tight text-[var(--color-primary)] mt-1.5 block">
               {languages.length}
             </span>
@@ -280,15 +280,15 @@ export default function GithubDashboard() {
       <section data-animate="fade-up" className="p-6 sm:p-8 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[var(--color-border)]">
           <div className="space-y-1">
-            <h2 className="text-base sm:text-lg font-normal tracking-tight text-[var(--color-primary)] flex items-center gap-2">
+            <h2 className="text-lg sm:text-xl font-normal tracking-tight text-[var(--color-primary)] flex items-center gap-2">
               <span>Contribution Activity</span>
               {calendar && (
-                <span className="chip text-[11px] font-mono px-2.5 py-0.5">
+                <span className="chip text-xs font-mono px-2.5 py-0.5">
                   {calendar.totalContributions} contributions in the last 12 months
                 </span>
               )}
             </h2>
-            <p className="text-xs text-[var(--color-secondary)]">
+            <p className="text-xs sm:text-[13px] text-[var(--color-secondary)]">
               Refreshed periodically via official GitHub GraphQL API.
             </p>
           </div>
@@ -297,10 +297,10 @@ export default function GithubDashboard() {
             href="https://github.com/Sanchit0307"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-secondary text-xs shrink-0 self-start sm:self-auto"
+            className="btn-secondary text-xs sm:text-sm shrink-0 self-start sm:self-auto"
           >
             <span>GitHub Profile</span>
-            <span className="text-[10px]">↗</span>
+            <span className="text-xs">↗</span>
           </a>
         </div>
 
@@ -426,10 +426,10 @@ export default function GithubDashboard() {
       {languages.length > 0 && (
         <section data-animate="fade-up" className="space-y-5 p-6 sm:p-8 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xs">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-normal tracking-tight text-[var(--color-primary)]">
+            <h2 className="text-lg sm:text-xl font-normal tracking-tight text-[var(--color-primary)]">
               Language Distribution
             </h2>
-            <span className="text-xs font-mono text-[var(--color-secondary)]">
+            <span className="text-xs sm:text-[13px] font-mono text-[var(--color-secondary)]">
               Based on active public repositories
             </span>
           </div>
@@ -451,7 +451,7 @@ export default function GithubDashboard() {
           </div>
 
           {/* Legend */}
-          <div className="flex flex-wrap gap-5 pt-1 text-xs">
+          <div className="flex flex-wrap gap-5 pt-1 text-xs sm:text-[13px]">
             {languages.map((l, i) => {
               const colors = ['#3178C6', '#F7DF1E', '#E34F26', '#3572A5', '#61DAFB', '#5FA04E'];
               const color = colors[i % colors.length];
@@ -471,10 +471,10 @@ export default function GithubDashboard() {
       <section className="space-y-6" data-animate="stagger">
         <div className="flex items-center justify-between pb-2 border-b border-[var(--color-border)]">
           <div>
-            <h2 className="text-lg font-normal tracking-tight text-[var(--color-primary)]">
+            <h2 className="text-xl sm:text-2xl font-normal tracking-tight text-[var(--color-primary)]">
               Featured Public Repositories
             </h2>
-            <p className="text-xs text-[var(--color-secondary)] mt-0.5">
+            <p className="text-xs sm:text-[13px] text-[var(--color-secondary)] mt-0.5">
               Live repository metrics synchronized via GitHub API.
             </p>
           </div>
@@ -482,7 +482,7 @@ export default function GithubDashboard() {
             href="https://github.com/Sanchit0307?tab=repositories"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs font-medium text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-colors inline-flex items-center gap-1"
+            className="text-xs sm:text-sm font-medium text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-colors inline-flex items-center gap-1"
           >
             <span>All Repositories</span>
             <span>↗</span>
@@ -501,20 +501,20 @@ export default function GithubDashboard() {
             >
               <div>
                 <div className="flex items-start justify-between gap-2">
-                  <span className="text-sm font-medium text-[var(--color-primary)] group-hover:underline truncate">
+                  <span className="text-base sm:text-[17px] font-medium text-[var(--color-primary)] group-hover:underline truncate">
                     {repo.name}
                   </span>
-                  <span className="text-xs text-[var(--color-secondary)] group-hover:text-[var(--color-primary)] transition-colors shrink-0">
+                  <span className="text-xs sm:text-sm text-[var(--color-secondary)] group-hover:text-[var(--color-primary)] transition-colors shrink-0">
                     ↗
                   </span>
                 </div>
 
-                <p className="text-xs text-[var(--color-secondary)] mt-2.5 line-clamp-2 min-h-[2rem] leading-relaxed">
+                <p className="text-sm sm:text-[15px] text-[var(--color-secondary)] mt-2.5 line-clamp-2 min-h-[2.5rem] leading-relaxed">
                   {repo.description || 'Public GitHub repository by Sanchit Marwah.'}
                 </p>
               </div>
 
-              <div className="flex items-center justify-between text-[11px] text-[var(--color-secondary)] font-mono mt-5 pt-3.5 border-t border-[var(--color-border)]/60">
+              <div className="flex items-center justify-between text-xs sm:text-[13px] text-[var(--color-secondary)] font-mono mt-5 pt-3.5 border-t border-[var(--color-border)]/60">
                 <div className="flex items-center gap-3">
                   {repo.language && (
                     <span className="flex items-center gap-1.5 text-[var(--color-primary)]">

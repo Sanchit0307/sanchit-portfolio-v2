@@ -70,17 +70,17 @@ export default function ContactForm() {
 
   return (
     <div className="w-full border border-[var(--color-border)] rounded-2xl p-6 sm:p-8 bg-[var(--color-surface)] shadow-xs">
-      <div className="mb-6 space-y-1">
-        <h2 className="text-xl font-normal tracking-tight text-[var(--color-primary)]">
+      <div className="mb-6 space-y-1.5">
+        <h2 className="text-xl sm:text-[22px] lg:text-2xl font-normal tracking-tight text-[var(--color-primary)]">
           Send a Direct Message
         </h2>
-        <p className="text-xs sm:text-sm text-[var(--color-secondary)]">
+        <p className="text-sm sm:text-base text-[var(--color-secondary)] leading-relaxed">
           Fill out the details below. This will prepare a prefilled message directly addressed to Sanchit.
         </p>
       </div>
 
       {submittedViaMailto && (
-        <div className="mb-6 p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-muted)] text-xs space-y-1.5 animate-fade-in">
+        <div className="mb-6 p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-muted)] text-sm space-y-1.5 animate-fade-in">
           <div className="flex items-center gap-2 font-medium text-[var(--color-primary)]">
             <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
             <span>Prefilled email dispatched to your email client</span>
@@ -95,7 +95,7 @@ export default function ContactForm() {
       <form onSubmit={handleSubmit} noValidate className="space-y-5">
         {/* Name */}
         <div className="space-y-1.5">
-          <label htmlFor="name" className="block text-xs font-medium text-[var(--color-primary)]">
+          <label htmlFor="name" className="block text-sm font-medium text-[var(--color-primary)]">
             Your Name <span className="text-red-500" aria-hidden="true">*</span>
           </label>
           <input
@@ -107,14 +107,14 @@ export default function ContactForm() {
               if (errors.name) setErrors({ ...errors, name: '' });
             }}
             placeholder="Alex Doe"
-            className={`w-full px-3.5 py-2.5 text-sm rounded-lg border bg-[var(--bg-page)] text-[var(--color-primary)] placeholder-[var(--color-secondary)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-all ${
+            className={`w-full px-3.5 py-2.5 text-sm sm:text-base rounded-lg border bg-[var(--bg-page)] text-[var(--color-primary)] placeholder-[var(--color-secondary)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-all ${
               errors.name ? 'border-red-500' : 'border-[var(--color-border)]'
             }`}
             aria-invalid={errors.name ? 'true' : 'false'}
             aria-describedby={errors.name ? 'name-error' : undefined}
           />
           {errors.name && (
-            <p id="name-error" className="text-[11px] text-red-500 font-medium">
+            <p id="name-error" className="text-xs text-red-500 font-medium">
               {errors.name}
             </p>
           )}
@@ -122,7 +122,7 @@ export default function ContactForm() {
 
         {/* Email */}
         <div className="space-y-1.5">
-          <label htmlFor="email" className="block text-xs font-medium text-[var(--color-primary)]">
+          <label htmlFor="email" className="block text-sm font-medium text-[var(--color-primary)]">
             Email Address <span className="text-red-500" aria-hidden="true">*</span>
           </label>
           <input
@@ -134,14 +134,14 @@ export default function ContactForm() {
               if (errors.email) setErrors({ ...errors, email: '' });
             }}
             placeholder="alex@example.com"
-            className={`w-full px-3.5 py-2.5 text-sm rounded-lg border bg-[var(--bg-page)] text-[var(--color-primary)] placeholder-[var(--color-secondary)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-all ${
+            className={`w-full px-3.5 py-2.5 text-sm sm:text-base rounded-lg border bg-[var(--bg-page)] text-[var(--color-primary)] placeholder-[var(--color-secondary)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-all ${
               errors.email ? 'border-red-500' : 'border-[var(--color-border)]'
             }`}
             aria-invalid={errors.email ? 'true' : 'false'}
             aria-describedby={errors.email ? 'email-error' : undefined}
           />
           {errors.email && (
-            <p id="email-error" className="text-[11px] text-red-500 font-medium">
+            <p id="email-error" className="text-xs text-red-500 font-medium">
               {errors.email}
             </p>
           )}
@@ -149,7 +149,7 @@ export default function ContactForm() {
 
         {/* Purpose of Contact */}
         <div className="space-y-1.5">
-          <label htmlFor="purpose" className="block text-xs font-medium text-[var(--color-primary)]">
+          <label htmlFor="purpose" className="block text-sm font-medium text-[var(--color-primary)]">
             Purpose of Contact <span className="text-red-500" aria-hidden="true">*</span>
           </label>
           <select
@@ -159,7 +159,7 @@ export default function ContactForm() {
               setFormData({ ...formData, purpose: e.target.value });
               if (errors.purpose) setErrors({ ...errors, purpose: '' });
             }}
-            className={`w-full px-3.5 py-2.5 text-sm rounded-lg border bg-[var(--bg-page)] text-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-all ${
+            className={`w-full px-3.5 py-2.5 text-sm sm:text-base rounded-lg border bg-[var(--bg-page)] text-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-all ${
               errors.purpose ? 'border-red-500' : 'border-[var(--color-border)]'
             }`}
           >
@@ -170,7 +170,7 @@ export default function ContactForm() {
             ))}
           </select>
           {errors.purpose && (
-            <p id="purpose-error" className="text-[11px] text-red-500 font-medium">
+            <p id="purpose-error" className="text-xs text-red-500 font-medium">
               {errors.purpose}
             </p>
           )}
@@ -178,7 +178,7 @@ export default function ContactForm() {
 
         {/* Message */}
         <div className="space-y-1.5">
-          <label htmlFor="message" className="block text-xs font-medium text-[var(--color-primary)]">
+          <label htmlFor="message" className="block text-sm font-medium text-[var(--color-primary)]">
             Message <span className="text-red-500" aria-hidden="true">*</span>
           </label>
           <textarea
@@ -190,14 +190,14 @@ export default function ContactForm() {
               if (errors.message) setErrors({ ...errors, message: '' });
             }}
             placeholder="Write your note, proposal or enquiry here..."
-            className={`w-full px-3.5 py-2.5 text-sm rounded-lg border bg-[var(--bg-page)] text-[var(--color-primary)] placeholder-[var(--color-secondary)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-all resize-y ${
+            className={`w-full px-3.5 py-2.5 text-sm sm:text-base rounded-lg border bg-[var(--bg-page)] text-[var(--color-primary)] placeholder-[var(--color-secondary)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-all resize-y ${
               errors.message ? 'border-red-500' : 'border-[var(--color-border)]'
             }`}
             aria-invalid={errors.message ? 'true' : 'false'}
             aria-describedby={errors.message ? 'message-error' : undefined}
           />
           {errors.message && (
-            <p id="message-error" className="text-[11px] text-red-500 font-medium">
+            <p id="message-error" className="text-xs text-red-500 font-medium">
               {errors.message}
             </p>
           )}

@@ -30,21 +30,21 @@ import { VERIFIED_EDUCATION } from '../data/siteData';
           />
 
           <!-- Milestone Content Card -->
-          <div class="space-y-3 max-w-2xl border border-[var(--color-border)] rounded-xl p-5 sm:p-6 bg-[var(--color-surface)] hover:border-[var(--color-primary)]/30 transition-colors shadow-2xs">
+          <div class="space-y-3.5 max-w-2xl border border-[var(--color-border)] rounded-xl p-5 sm:p-6 bg-[var(--color-surface)] hover:border-[var(--color-primary)]/30 transition-colors shadow-2xs">
             <!-- Stage Header & Period / Status -->
-            <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs sm:text-[13px]">
               <div class="flex items-center gap-2">
-                <span class="font-medium text-[var(--color-primary)] text-sm">
+                <span class="font-medium text-[var(--color-primary)] text-sm sm:text-base">
                   {item.stage}
                 </span>
-                {item.tag && <span class="chip text-[11px] px-2 py-0.5">{item.tag}</span>}
+                {item.tag && <span class="chip text-xs px-2.5 py-0.5">{item.tag}</span>}
               </div>
 
-              <div class="flex items-center gap-2 font-mono text-xs text-[var(--color-secondary)]">
+              <div class="flex items-center gap-2 font-mono text-xs sm:text-[13px] text-[var(--color-secondary)]">
                 {item.period && <span>{item.period}</span>}
                 <span
                   class:list={[
-                    'px-2 py-0.5 rounded-full border text-[10px]',
+                    'px-2 py-0.5 rounded-full border text-[11px]',
                     isOngoing
                       ? 'border-[var(--color-primary)] text-[var(--color-primary)] font-medium'
                       : 'border-[var(--color-border)] text-[var(--color-secondary)]'
@@ -58,30 +58,30 @@ import { VERIFIED_EDUCATION } from '../data/siteData';
             <!-- Institution or Board Title -->
             <div class="space-y-1 pt-1">
               {item.institution && (
-                <h2 class="text-lg sm:text-xl font-normal tracking-tight text-[var(--color-primary)]">
+                <h2 class="text-xl sm:text-[22px] font-normal tracking-tight text-[var(--color-primary)]">
                   {item.institution}
                 </h2>
               )}
               {item.board && (
-                <h2 class="text-lg sm:text-xl font-normal tracking-tight text-[var(--color-primary)]">
+                <h2 class="text-xl sm:text-[22px] font-normal tracking-tight text-[var(--color-primary)]">
                   {item.board}
                 </h2>
               )}
 
               {item.degree && (
-                <p class="text-sm font-medium text-[var(--color-secondary)]">
+                <p class="text-[15px] sm:text-base font-medium text-[var(--color-secondary)]">
                   {item.degree}
                 </p>
               )}
               {item.location && (
-                <p class="text-xs text-[var(--color-secondary)]">
+                <p class="text-xs sm:text-[13px] text-[var(--color-secondary)]">
                   {item.location}
                 </p>
               )}
             </div>
 
             <!-- Description -->
-            <p class="text-sm text-[var(--color-secondary)] leading-relaxed pt-1">
+            <p class="text-sm sm:text-base text-[var(--color-secondary)] leading-relaxed pt-1">
               {item.description}
             </p>
           </div>

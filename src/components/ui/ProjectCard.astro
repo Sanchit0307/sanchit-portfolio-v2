@@ -52,16 +52,16 @@ const { project, priority = false, class: className = '' } = Astro.props;
     <!-- Right Column: Project Details & Meta -->
     <div class="lg:col-span-5 flex flex-col justify-between space-y-5">
       <!-- Monospace Index and Role/Type Badge -->
-      <div class="flex items-center justify-between text-xs">
-        <span class="font-mono text-[var(--color-secondary)] tracking-wider text-xs sm:text-sm">
+      <div class="flex items-center justify-between text-xs sm:text-[13px]">
+        <span class="font-mono text-[var(--color-secondary)] tracking-wider">
           {project.num}
         </span>
         {project.role ? (
-          <span class="font-mono text-[11px] px-3 py-1 rounded-full border border-[var(--color-border)] bg-[var(--color-muted)] text-[var(--color-secondary)]">
+          <span class="font-mono text-xs px-3 py-1 rounded-full border border-[var(--color-border)] bg-[var(--color-muted)] text-[var(--color-secondary)]">
             Role: {project.role}
           </span>
         ) : project.type ? (
-          <span class="font-mono text-[11px] px-3 py-1 rounded-full border border-[var(--color-border)] bg-[var(--color-muted)] text-[var(--color-secondary)]">
+          <span class="font-mono text-xs px-3 py-1 rounded-full border border-[var(--color-border)] bg-[var(--color-muted)] text-[var(--color-secondary)]">
             {project.type}
           </span>
         ) : null}
@@ -69,7 +69,7 @@ const { project, priority = false, class: className = '' } = Astro.props;
 
       <!-- Title & Description -->
       <div class="space-y-2.5">
-        <h3 class="text-xl sm:text-2xl lg:text-3xl font-normal tracking-tight text-[var(--color-primary)] flex items-center gap-2">
+        <h3 class="text-xl sm:text-2xl lg:text-[26px] font-normal tracking-tight text-[var(--color-primary)] flex items-center gap-2">
           {project.link ? (
             <a
               href={project.link}
@@ -84,7 +84,7 @@ const { project, priority = false, class: className = '' } = Astro.props;
             <span>{project.title}</span>
           )}
         </h3>
-        <p class="text-sm sm:text-base text-[var(--color-secondary)] leading-relaxed">
+        <p class="text-[15px] sm:text-base text-[var(--color-secondary)] leading-relaxed">
           {project.description}
         </p>
       </div>
@@ -93,7 +93,7 @@ const { project, priority = false, class: className = '' } = Astro.props;
       <div class="space-y-5 pt-1">
         <div class="flex flex-wrap gap-2">
           {project.tags.map((tag) => (
-            <span class="chip text-xs px-3 py-0.5">{tag}</span>
+            <span class="chip text-xs sm:text-[13px] px-3 py-0.5">{tag}</span>
           ))}
         </div>
 
