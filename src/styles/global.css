@@ -376,24 +376,29 @@ textarea:focus-visible {
   }
 }
 
-/* Scroll-triggered reveal states (Subtle and restrained to eliminate navigation jerk) */
+/* Scroll-triggered reveal states (Subtle, fluid and natural motion) */
 @media (prefers-reduced-motion: no-preference) {
   html.motion-ready [data-hero-animate]:not(.is-revealed) {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(18px);
     will-change: opacity, transform;
   }
 
   html.motion-ready [data-hero-portrait]:not(.is-revealed) {
     opacity: 0;
-    transform: scale(0.98);
+    transform: scale(0.98) translateY(12px);
     will-change: opacity, transform;
   }
 
-  html.motion-ready [data-animate="fade-up"]:not(.is-revealed),
+  html.motion-ready [data-animate="fade-up"]:not(.is-revealed) {
+    opacity: 0;
+    transform: translateY(22px);
+    will-change: opacity, transform;
+  }
+
   html.motion-ready [data-animate="stagger"] [data-animate-item]:not(.is-revealed) {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(20px) scale(0.985);
     will-change: opacity, transform;
   }
 

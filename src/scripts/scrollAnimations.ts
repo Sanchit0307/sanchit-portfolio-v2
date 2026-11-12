@@ -6,7 +6,7 @@ export function initScrollAnimations() {
   // Respect user preference for reduced motion
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (prefersReduced) {
-    document.querySelectorAll<HTMLElement>('[data-animate], [data-animate-item], [data-hero-animate]').forEach((el) => {
+    document.querySelectorAll<HTMLElement>('[data-animate], [data-animate-item], [data-hero-animate], [data-hero-portrait]').forEach((el) => {
       el.style.opacity = '1';
       el.style.transform = 'none';
       el.classList.add('is-revealed');
@@ -19,7 +19,7 @@ export function initScrollAnimations() {
   // Helper: check if element is already within the visible viewport on mount/page-enter
   const isElementInViewport = (el: HTMLElement) => {
     const rect = el.getBoundingClientRect();
-    return rect.top < window.innerHeight && rect.bottom > 0;
+    return rect.top < window.innerHeight * 0.92 && rect.bottom > 0;
   };
 
   // 1. Hero Staggered Entrance (on homepage)
@@ -33,10 +33,10 @@ export function initScrollAnimations() {
       }
       animate(
         el,
-        { opacity: [0, 1], y: [6, 0] },
+        { opacity: [0, 1], y: [18, 0] },
         {
-          duration: 0.35,
-          delay: index * 0.04,
+          duration: 0.55,
+          delay: 0.06 + index * 0.08,
           easing: [0.16, 1, 0.3, 1],
         }
       ).finished.then(() => {
@@ -52,10 +52,10 @@ export function initScrollAnimations() {
   if (portrait && !portrait.classList.contains('is-revealed')) {
     animate(
       portrait,
-      { opacity: [0, 1], scale: [0.98, 1] },
+      { opacity: [0, 1], scale: [0.98, 1], y: [14, 0] },
       {
-        duration: 0.45,
-        delay: 0.08,
+        duration: 0.65,
+        delay: 0.15,
         easing: [0.16, 1, 0.3, 1],
       }
     ).finished.then(() => {
@@ -68,11 +68,16 @@ export function initScrollAnimations() {
   // 3. Scroll-triggered fade-up sections
   const fadeUpElements = document.querySelectorAll<HTMLElement>('[data-animate="fade-up"]:not(.is-revealed)');
   fadeUpElements.forEach((el) => {
-    // If element is already in the viewport upon entering page, reveal immediately to enter fluidly with page transition
     if (isElementInViewport(el)) {
-      el.classList.add('is-revealed');
-      el.style.opacity = '';
-      el.style.transform = '';
+      animate(
+        el,
+        { opacity: [0, 1], y: [16, 0] },
+        { duration: 0.5, easing: [0.16, 1, 0.3, 1] }
+      ).finished.then(() => {
+        el.classList.add('is-revealed');
+        el.style.opacity = '';
+        el.style.transform = '';
+      });
       return;
     }
 
@@ -81,8 +86,8 @@ export function initScrollAnimations() {
       () => {
         animate(
           el,
-          { opacity: [0, 1], y: [8, 0] },
-          { duration: 0.35, easing: [0.16, 1, 0.3, 1] }
+          { opacity: [0, 1], y: [22, 0] },
+          { duration: 0.6, easing: [0.16, 1, 0.3, 1] }
         ).finished.then(() => {
           el.classList.add('is-revealed');
           el.style.opacity = '';
@@ -93,19 +98,11 @@ export function initScrollAnimations() {
     );
   });
 
-  // 4. Staggered containers & card groups
+  // 4. Staggered containers & card groups (Project cards, skills, timeline entries, stats)
   const staggerContainers = document.querySelectorAll<HTMLElement>('[data-animate="stagger"]:not(.is-revealed)');
   staggerContainers.forEach((container) => {
-    // If container is already in viewport on mount, reveal immediately so cards enter naturally with the main page transition
-    if (isElementInViewport(container)) {
-      container.classList.add('is-revealed');
-      container.querySelectorAll<HTMLElement>('[data-animate-item]').forEach((item) => {
-        item.classList.add('is-revealed');
-        item.style.opacity = '';
-        item.style.transform = '';
-      });
-      return;
-    }
+    const isAboveFold = isElementInViewport(container);
+    const triggerMargin = isAboveFold ? '0px' : '0px 0px -60px 0px';
 
     inView(
       container,
@@ -113,11 +110,11 @@ export function initScrollAnimations() {
         const items = container.querySelectorAll<HTMLElement>('[data-animate-item]:not(.is-revealed)');
         if (items.length > 0) {
           items.forEach((item, index) => {
-            const delay = Math.min(index * 0.04, 0.16);
+            const delay = Math.min(index * 0.08, 0.4);
             animate(
               item,
-              { opacity: [0, 1], y: [8, 0] },
-              { duration: 0.35, delay, easing: [0.16, 1, 0.3, 1] }
+              { opacity: [0, 1], y: [20, 0], scale: [0.985, 1] },
+              { duration: 0.55, delay, easing: [0.16, 1, 0.3, 1] }
             ).finished.then(() => {
               item.classList.add('is-revealed');
               item.style.opacity = '';
@@ -127,7 +124,7 @@ export function initScrollAnimations() {
         }
         container.classList.add('is-revealed');
       },
-      { margin: '0px 0px -40px 0px' }
+      { margin: triggerMargin }
     );
   });
 
@@ -140,7 +137,7 @@ export function initScrollAnimations() {
         animate(
           track,
           { scaleY: [0, 1] },
-          { duration: 0.5, easing: [0.16, 1, 0.3, 1] }
+          { duration: 0.75, easing: [0.16, 1, 0.3, 1] }
         );
       },
       { margin: '0px 0px -40px 0px' }
