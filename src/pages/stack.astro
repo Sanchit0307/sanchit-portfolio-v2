@@ -1,4 +1,43 @@
 ---
-// Redirect /stack to /skills for backward compatibility
-return Astro.redirect('/skills', 301);
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
+import TechIcon from '../components/ui/TechIcon.astro';
+import { VERIFIED_SKILLS } from '../data/siteData';
 ---
+
+<BaseLayout
+  title="Stack"
+  description="Technologies and tools I use to build, ship and iterate."
+>
+  <PageHeader
+    title="Stack"
+    description="Technologies and tools I use to build, ship and iterate."
+  />
+
+  <div class="space-y-12" data-animate="stagger">
+    {VERIFIED_SKILLS.map((section) => (
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start pb-10 border-b border-[var(--color-border)] last:border-b-0" data-animate-item>
+        <div class="md:col-span-3">
+          <h2 class="text-sm font-medium text-[var(--color-primary)]">
+            {section.category}
+          </h2>
+          <p class="text-xs text-[var(--color-secondary)] mt-1 font-mono">
+            {section.items.length} technologies
+          </p>
+        </div>
+        <div class="md:col-span-9 flex flex-wrap gap-4 sm:gap-6" data-animate="stagger">
+          {section.items.map((skill) => (
+            <div class="flex flex-col items-center gap-2.5 group w-20" data-animate-item>
+              <div class="w-16 h-16 sm:w-18 sm:h-18 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] flex items-center justify-center p-3 group-hover:border-[var(--color-primary)]/40 transition-colors shadow-2xs">
+                <TechIcon name={skill.name} />
+              </div>
+              <span class="text-xs text-center text-[var(--color-secondary)] group-hover:text-[var(--color-primary)] transition-colors leading-tight">
+                {skill.name}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+</BaseLayout>

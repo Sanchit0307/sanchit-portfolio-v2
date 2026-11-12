@@ -15,16 +15,16 @@ export function initScrollAnimations() {
 
   document.documentElement.classList.add('motion-ready');
 
-  // 1. Hero Staggered Entrance (immediate upon mount)
+  // 1. Hero Staggered Entrance (immediate upon mount, restrained and instant)
   const heroElements = document.querySelectorAll<HTMLElement>('[data-hero-animate]');
   if (heroElements.length > 0) {
     heroElements.forEach((el, index) => {
       animate(
         el,
-        { opacity: [0, 1], y: [14, 0] },
+        { opacity: [0, 1], y: [6, 0] },
         {
-          duration: 0.55,
-          delay: index * 0.08,
+          duration: 0.35,
+          delay: index * 0.05,
           easing: [0.16, 1, 0.3, 1],
         }
       ).finished.then(() => {
@@ -40,10 +40,10 @@ export function initScrollAnimations() {
   if (portrait && !portrait.classList.contains('is-revealed')) {
     animate(
       portrait,
-      { opacity: [0, 1], scale: [0.97, 1] },
+      { opacity: [0, 1], scale: [0.98, 1] },
       {
-        duration: 0.7,
-        delay: 0.15,
+        duration: 0.45,
+        delay: 0.1,
         easing: [0.16, 1, 0.3, 1],
       }
     ).finished.then(() => {
@@ -53,7 +53,7 @@ export function initScrollAnimations() {
     });
   }
 
-  // 3. Scroll-triggered fade-up sections
+  // 3. Scroll-triggered fade-up sections (minimal vertical displacement)
   const fadeUpElements = document.querySelectorAll<HTMLElement>('[data-animate="fade-up"]:not(.is-revealed)');
   fadeUpElements.forEach((el) => {
     inView(
@@ -61,8 +61,8 @@ export function initScrollAnimations() {
       () => {
         animate(
           el,
-          { opacity: [0, 1], y: [16, 0] },
-          { duration: 0.5, easing: [0.22, 1, 0.36, 1] }
+          { opacity: [0, 1], y: [8, 0] },
+          { duration: 0.35, easing: [0.16, 1, 0.3, 1] }
         ).finished.then(() => {
           el.classList.add('is-revealed');
           el.style.opacity = '';
@@ -82,11 +82,11 @@ export function initScrollAnimations() {
         const items = container.querySelectorAll<HTMLElement>('[data-animate-item]:not(.is-revealed)');
         if (items.length > 0) {
           items.forEach((item, index) => {
-            const delay = Math.min(index * 0.05, 0.25);
+            const delay = Math.min(index * 0.04, 0.18);
             animate(
               item,
-              { opacity: [0, 1], y: [16, 0] },
-              { duration: 0.45, delay, easing: [0.22, 1, 0.36, 1] }
+              { opacity: [0, 1], y: [8, 0] },
+              { duration: 0.35, delay, easing: [0.16, 1, 0.3, 1] }
             ).finished.then(() => {
               item.classList.add('is-revealed');
               item.style.opacity = '';
@@ -109,10 +109,24 @@ export function initScrollAnimations() {
         animate(
           track,
           { scaleY: [0, 1] },
-          { duration: 0.75, easing: [0.22, 1, 0.36, 1] }
+          { duration: 0.5, easing: [0.16, 1, 0.3, 1] }
         );
       },
-      { margin: '0px 0px -60px 0px' }
+      { margin: '0px 0px -40px 0px' }
     );
+  });
+
+  // 6. Smooth anchor scrolling for in-page hashes only (avoids cross-page scroll jumps)
+  document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', (e) => {
+      const hash = anchor.getAttribute('href');
+      if (!hash || hash === '#') return;
+      const target = document.querySelector(hash);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        history.pushState(null, '', hash);
+      }
+    });
   });
 }
