@@ -23,21 +23,22 @@ import {
           </span>
         </div>
 
-        <!-- 2. Oversized Name Heading & 3. Professional Introduction -->
-        <div data-hero-animate class="space-y-3 sm:space-y-4">
-          <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] xl:text-[6rem] font-bold tracking-[-0.04em] text-[var(--color-primary)] leading-[0.95]">
+        <!-- 2. Full Name Heading (Single line on desktop) -->
+        <div data-hero-animate>
+          <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-[4rem] xl:text-[4.5rem] font-bold tracking-[-0.035em] text-[var(--color-primary)] leading-[1.05] whitespace-normal sm:whitespace-nowrap">
             Sanchit Marwah.
           </h1>
-
-          <p class="text-2xl sm:text-3xl md:text-4xl lg:text-[3.25rem] xl:text-[3.5rem] font-normal tracking-tight text-[var(--color-secondary)] leading-[1.08]">
-            Computer Science<br class="hidden sm:inline" /> Student & Web Developer.
-          </p>
         </div>
 
-        <!-- 4. Supporting paragraph -->
-        <p data-hero-animate class="text-base sm:text-lg lg:text-xl text-[var(--color-secondary)] leading-relaxed max-w-2xl pt-1">
-          {PERSONAL_INFO.bio}
-        </p>
+        <!-- 3. Combined Subtitle and Description in one cohesive supporting block -->
+        <div data-hero-animate class="space-y-2.5 max-w-2xl">
+          <p class="text-lg sm:text-xl lg:text-2xl font-medium tracking-tight text-[var(--color-primary)] leading-snug">
+            Computer Science Student & Web Developer.
+          </p>
+          <p class="text-base sm:text-lg text-[var(--color-secondary)] leading-relaxed">
+            {PERSONAL_INFO.bio}
+          </p>
+        </div>
 
         <!-- 5. Primary Action Controls -->
         <div data-hero-animate class="flex flex-wrap items-center gap-3.5 pt-2">
