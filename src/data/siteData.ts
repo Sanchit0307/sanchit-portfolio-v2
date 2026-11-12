@@ -46,7 +46,11 @@ export const VERIFIED_PROJECTS: Project[] = [
     num: '01',
     title: 'Delhi NCR Complaint Portal',
     type: 'Individual',
-    description: 'An AI-powered citizen grievance redressal platform enabling residents across Delhi NCR to draft legally sound formal representations routed directly to concerned authorities.',
+    description: 'Problem:
+"Citizens often lack a centralized way to report civic issues and track their resolution across different areas."
+
+Solution:
+"A web-based civic complaint platform that enables users to register and track complaints across Delhi NCR, making the reporting process more accessible and organized."',
     tags: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Google Gemini'],
     link: 'https://delhi-complaint-portal-fduhfggb8-sanchit0307s-projects.vercel.app/',
     github: 'https://github.com/Sanchit0307/delhi-complaint-portal',
