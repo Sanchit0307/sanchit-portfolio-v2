@@ -13,11 +13,67 @@ const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes in-process cache
 
 const USERNAME = 'Sanchit0307';
 
-async function fetchFromGraphQL(token: string) {
+function getKolkataDateStrings() {
+  const now = new Date();
+  const kolkataFormatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Kolkata',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  const todayStr = kolkataFormatter.format(now); // e.g. "2026-11-16"
+
+  // End of today in IST (UTC+05:30) as ISO-8601 for GraphQL $to
+  const toDate = new Date(`${todayStr}T23:59:59.999+05:30`);
+  const toIso = toDate.toISOString();
+
+  // 364 days back so GraphQL does not exceed the maximum allowed 1-year window
+  const fromDate = new Date(toDate.getTime() - 364 * 24 * 60 * 60 * 1000);
+  const fromIso = fromDate.toISOString();
+
+  return { todayStr, toIso, fromIso };
+}
+
+function padWeeks(weeks: { contributionDays: any[] }[]) {
+  if (!weeks || weeks.length === 0) return weeks;
+
+  // Pad first week if it starts after Sunday (weekday 0)
+  if (weeks[0].contributionDays.length > 0) {
+    const firstDay = weeks[0].contributionDays[0];
+    if (firstDay.weekday > 0) {
+      const placeholders = Array.from({ length: firstDay.weekday }, (_, i) => ({
+        date: '',
+        contributionCount: 0,
+        color: '#ebedf0',
+        weekday: i,
+      }));
+      weeks[0].contributionDays = [...placeholders, ...weeks[0].contributionDays];
+    }
+  }
+
+  // Pad last week if it ends before Saturday (weekday 6)
+  const lastWeek = weeks[weeks.length - 1];
+  if (lastWeek && lastWeek.contributionDays.length > 0) {
+    const lastDay = lastWeek.contributionDays[lastWeek.contributionDays.length - 1];
+    if (lastDay.weekday < 6) {
+      const placeholders = Array.from({ length: 6 - lastDay.weekday }, (_, i) => ({
+        date: '',
+        contributionCount: 0,
+        color: '#ebedf0',
+        weekday: lastDay.weekday + 1 + i,
+      }));
+      lastWeek.contributionDays = [...lastWeek.contributionDays, ...placeholders];
+    }
+  }
+
+  return weeks;
+}
+
+async function fetchFromGraphQL(token: string, fromIso: string, toIso: string) {
   const query = `
-    query($username: String!) {
+    query($username: String!, $from: DateTime!, $to: DateTime!) {
       user(login: $username) {
-        contributionsCollection {
+        contributionsCollection(from: $from, to: $to) {
           contributionCalendar {
             totalContributions
             weeks {
@@ -49,7 +105,11 @@ async function fetchFromGraphQL(token: string) {
     },
     body: JSON.stringify({
       query,
-      variables: { username: USERNAME },
+      variables: {
+        username: USERNAME,
+        from: fromIso,
+        to: toIso,
+      },
     }),
   });
 
@@ -63,11 +123,13 @@ async function fetchFromGraphQL(token: string) {
     throw new Error(json.errors?.[0]?.message || 'No calendar in GraphQL payload');
   }
 
+  calendar.weeks = padWeeks(calendar.weeks);
+
   return calendar;
 }
 
-async function fetchFromPublicProfile() {
-  const url = `https://github.com/users/${USERNAME}/contributions`;
+async function fetchFromPublicProfile(todayStr: string) {
+  const url = `https://github.com/users/${USERNAME}/contributions?to=${todayStr}`;
   const res = await fetch(url, {
     headers: {
       'User-Agent':
@@ -82,7 +144,7 @@ async function fetchFromPublicProfile() {
 
   const html = await res.text();
 
-  // Parse total contributions from heading e.g. "173 contributions in the last year"
+  // Parse total contributions from heading e.g. "210 contributions in 2026"
   const h2Match = html.match(/<h2[^>]*class="[^"]*f4[^"]*"[^>]*>([\s\S]*?)<\/h2>/);
   let totalContributions = 0;
   if (h2Match) {
@@ -159,29 +221,37 @@ async function fetchFromPublicProfile() {
     weeks.push({ contributionDays: currentWeek });
   }
 
+  // Pad first and last weeks for Sunday–Saturday 7-row alignment
+  padWeeks(weeks);
+
   // Parse months from thead
   const months: { name: string; year: number; firstDay: string; totalWeeks: number }[] = [];
   const thead = html.match(/<thead[^>]*>([\s\S]*?)<\/thead>/);
   if (thead) {
     const colHeaders = [...thead[1].matchAll(/<td[^>]*colspan="([^"]+)"[^>]*>([\s\S]*?)<\/td>/g)];
+    const currentYear = parseInt(todayStr.split('-')[0], 10);
     colHeaders.forEach((ch) => {
       const colspan = parseInt(ch[1], 10);
       const labelMatch = ch[2].match(/<span[^>]*aria-hidden="true"[^>]*>([^<]+)<\/span>/);
       const name = labelMatch ? labelMatch[1].trim() : '';
       months.push({
         name,
-        year: new Date().getFullYear(),
+        year: currentYear,
         firstDay: '',
         totalWeeks: colspan,
       });
     });
   }
 
-  // Fallback recalculation of total contributions
-  if (totalContributions === 0) {
-    for (const day of daysMap.values()) {
-      totalContributions += day.contributionCount;
+  // Recalculate total if heading wasn't parsed
+  let totalSum = 0;
+  for (const w of weeks) {
+    for (const d of w.contributionDays) {
+      totalSum += d.contributionCount;
     }
+  }
+  if (totalContributions === 0) {
+    totalContributions = totalSum;
   }
 
   return {
@@ -212,13 +282,15 @@ export const GET: APIRoute = async () => {
   // Securely retrieve token only from process.env on server
   const token = typeof process !== 'undefined' ? process.env?.GITHUB_TOKEN : undefined;
 
+  const { todayStr, toIso, fromIso } = getKolkataDateStrings();
+
   let calendar: any = null;
   let method = 'none';
 
-  // 1. Try GraphQL if token exists
+  // 1. Try GraphQL if token exists with explicit Asia/Kolkata date range
   if (token) {
     try {
-      calendar = await fetchFromGraphQL(token);
+      calendar = await fetchFromGraphQL(token, fromIso, toIso);
       method = 'graphql';
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';
@@ -226,10 +298,10 @@ export const GET: APIRoute = async () => {
     }
   }
 
-  // 2. Try Public GitHub contributions endpoint if GraphQL was not used or failed
+  // 2. Try Public GitHub contributions endpoint with explicit local 'to' date
   if (!calendar) {
     try {
-      calendar = await fetchFromPublicProfile();
+      calendar = await fetchFromPublicProfile(todayStr);
       method = 'public-calendar';
     } catch (err: unknown) {
       const errMsg = err instanceof Error ? err.message : 'Unknown error';

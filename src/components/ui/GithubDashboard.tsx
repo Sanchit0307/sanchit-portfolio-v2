@@ -68,7 +68,7 @@ export default function GithubDashboard() {
     const controller = new AbortController();
 
     async function fetchDashboardData() {
-      const cacheKey = 'gh_data_Sanchit0307_v2';
+      const cacheKey = 'gh_data_Sanchit0307_v3';
       const cached = sessionStorage.getItem(cacheKey);
       let cachedData: any = null;
 
@@ -391,17 +391,28 @@ export default function GithubDashboard() {
                   <div className="flex gap-[3.5px]">
                     {calendar.weeks.map((week, wIdx) => (
                       <div key={wIdx} className="flex flex-col gap-[3.5px]">
-                        {week.contributionDays.map((day, dIdx) => (
-                          <div
-                            key={dIdx}
-                            onMouseEnter={() => setHoveredDay({ date: day.date, count: day.contributionCount })}
-                            onMouseLeave={() => setHoveredDay(null)}
-                            title={`${day.contributionCount} contributions on ${formatDate(day.date)}`}
-                            className={`w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-[2px] cursor-pointer transition-transform hover:scale-125 ${getIntensityClass(
-                              day.contributionCount
-                            )}`}
-                          />
-                        ))}
+                        {week.contributionDays.map((day, dIdx) => {
+                          if (!day.date) {
+                            return (
+                              <div
+                                key={dIdx}
+                                className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-[2px] opacity-0 pointer-events-none"
+                                aria-hidden="true"
+                              />
+                            );
+                          }
+                          return (
+                            <div
+                              key={dIdx}
+                              onMouseEnter={() => setHoveredDay({ date: day.date, count: day.contributionCount })}
+                              onMouseLeave={() => setHoveredDay(null)}
+                              title={`${day.contributionCount} contributions on ${formatDate(day.date)}`}
+                              className={`w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-[2px] cursor-pointer transition-transform hover:scale-125 ${getIntensityClass(
+                                day.contributionCount
+                              )}`}
+                            />
+                          );
+                        })}
                       </div>
                     ))}
                   </div>
