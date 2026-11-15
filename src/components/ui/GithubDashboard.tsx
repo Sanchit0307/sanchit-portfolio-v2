@@ -64,27 +64,39 @@ export default function GithubDashboard() {
   const [hoveredDay, setHoveredDay] = useState<{ date: string; count: number } | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
+    const controller = new AbortController();
+
     async function fetchDashboardData() {
       const cacheKey = 'gh_data_Sanchit0307_v2';
       const cached = sessionStorage.getItem(cacheKey);
+      let cachedData: any = null;
 
       if (cached) {
         try {
-          const parsed = JSON.parse(cached);
-          if (Date.now() - parsed.timestamp < 1000 * 60 * 15) {
-            setProfile(parsed.profile);
-            setRepos(parsed.repos);
-            setLanguages(parsed.languages);
-            setTotalStars(parsed.totalStars);
-            setTotalForks(parsed.totalForks);
-            setCalendar(parsed.calendar);
-            setContributionsConfigured(parsed.contributionsConfigured);
+          cachedData = JSON.parse(cached);
+          const isFresh = cachedData?.timestamp && Date.now() - cachedData.timestamp < 1000 * 60 * 5;
+
+          // Hydrate immediately with cached data so the UI remains fluid
+          if (cachedData.profile && cachedData.repos) {
+            setProfile(cachedData.profile);
+            setRepos(cachedData.repos);
+            setLanguages(cachedData.languages || []);
+            setTotalStars(cachedData.totalStars || 0);
+            setTotalForks(cachedData.totalForks || 0);
+            setCalendar(cachedData.calendar || null);
+            setContributionsConfigured(cachedData.contributionsConfigured ?? null);
             setLoading(false);
             setTimeout(() => initScrollAnimations(), 60);
+          }
+
+          // If still fresh (< 5 minutes), do not trigger an unnecessary network request
+          if (isFresh) {
             return;
           }
         } catch {
           sessionStorage.removeItem(cacheKey);
+          cachedData = null;
         }
       }
 
@@ -93,11 +105,15 @@ export default function GithubDashboard() {
         const [userRes, reposRes, contribRes] = await Promise.all([
           fetch('https://api.github.com/users/Sanchit0307', {
             headers: { Accept: 'application/vnd.github.v3+json' },
+            signal: controller.signal,
           }),
           fetch('https://api.github.com/users/Sanchit0307/repos?sort=updated&per_page=30', {
             headers: { Accept: 'application/vnd.github.v3+json' },
+            signal: controller.signal,
           }),
-          fetch('/api/contributions.json'),
+          fetch('/api/contributions.json', {
+            signal: controller.signal,
+          }),
         ]);
 
         if (userRes.status === 403 || reposRes.status === 403) {
@@ -111,16 +127,19 @@ export default function GithubDashboard() {
         const userData: UserProfile = await userRes.json();
         const reposData: Repo[] = await reposRes.json();
 
-        // Parse contribution response
-        let calendarData: ContributionCalendar | null = null;
-        let isConfigured = false;
+        // Parse contribution response, preserving cached calendar if upstream has transient error
+        let calendarData: ContributionCalendar | null = cachedData?.calendar || null;
+        let isConfigured: boolean = cachedData?.contributionsConfigured ?? false;
+
         if (contribRes.ok) {
           const contribJson = await contribRes.json();
           if (contribJson.configured && contribJson.calendar) {
             calendarData = contribJson.calendar;
             isConfigured = true;
           } else if (contribJson.configured === false) {
-            isConfigured = false;
+            if (!calendarData) {
+              isConfigured = false;
+            }
           } else if (contribJson.error) {
             setContributionsError(contribJson.error);
           }
@@ -149,6 +168,8 @@ export default function GithubDashboard() {
           }))
           .sort((a, b) => b.count - a.count);
 
+        if (!isMounted) return;
+
         setProfile(userData);
         setRepos(reposData);
         setLanguages(langArray);
@@ -156,9 +177,10 @@ export default function GithubDashboard() {
         setTotalForks(forks);
         setCalendar(calendarData);
         setContributionsConfigured(isConfigured);
+        setLoading(false);
         setTimeout(() => initScrollAnimations(), 60);
 
-        // Cache in session storage
+        // Cache in session storage with fresh timestamp
         sessionStorage.setItem(
           cacheKey,
           JSON.stringify({
@@ -173,13 +195,23 @@ export default function GithubDashboard() {
           })
         );
       } catch (err: any) {
-        setError(err.message || 'Unable to fetch engineering data.');
+        if (err.name === 'AbortError') return;
+        if (!cachedData) {
+          setError(err.message || 'Unable to fetch engineering data.');
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     }
 
     fetchDashboardData();
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
   }, []);
 
   const getIntensityClass = (count: number) => {

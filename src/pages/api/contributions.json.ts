@@ -1,4 +1,7 @@
 import type { APIRoute } from 'astro';
+import fallbackCalendar from '../../data/contributions-fallback.json';
+
+export const prerender = false;
 
 interface CachedData {
   timestamp: number;
@@ -6,7 +9,7 @@ interface CachedData {
 }
 
 let inMemoryCache: CachedData | null = null;
-const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes
+const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes in-process cache
 
 const USERNAME = 'Sanchit0307';
 
@@ -200,15 +203,14 @@ export const GET: APIRoute = async () => {
         status: 200,
         headers: {
           'Content-Type': 'application/json',
-          'Cache-Control': 'public, max-age=900, stale-while-revalidate=1800',
+          'Cache-Control': 'public, s-maxage=900, stale-while-revalidate=1800, stale-if-error=86400',
         },
       }
     );
   }
 
-  const token =
-    (typeof process !== 'undefined' && process.env?.GITHUB_TOKEN) ||
-    import.meta.env?.GITHUB_TOKEN;
+  // Securely retrieve token only from process.env on server
+  const token = typeof process !== 'undefined' ? process.env?.GITHUB_TOKEN : undefined;
 
   let calendar: any = null;
   let method = 'none';
@@ -218,8 +220,9 @@ export const GET: APIRoute = async () => {
     try {
       calendar = await fetchFromGraphQL(token);
       method = 'graphql';
-    } catch (err: any) {
-      console.warn('GitHub GraphQL fetch failed, attempting public fallback:', err.message);
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.warn('GitHub GraphQL fetch failed, attempting public fallback:', errMsg);
     }
   }
 
@@ -228,11 +231,13 @@ export const GET: APIRoute = async () => {
     try {
       calendar = await fetchFromPublicProfile();
       method = 'public-calendar';
-    } catch (err: any) {
-      console.warn('GitHub public profile fetch failed:', err.message);
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : 'Unknown error';
+      console.warn('GitHub public profile fetch failed:', errMsg);
     }
   }
 
+  // 3. Return fresh calendar if retrieved
   if (calendar) {
     const payload = {
       configured: true,
@@ -251,12 +256,51 @@ export const GET: APIRoute = async () => {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=900, stale-while-revalidate=1800',
+        'Cache-Control': 'public, s-maxage=900, stale-while-revalidate=1800, stale-if-error=86400',
       },
     });
   }
 
-  // If neither method could obtain data (e.g. offline/network issue)
+  // 4. If remote fetches failed, fall back to in-memory cache if available (stale)
+  if (inMemoryCache) {
+    return new Response(
+      JSON.stringify({
+        ...inMemoryCache.data,
+        cached: true,
+        stale: true,
+      }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=300, stale-if-error=86400',
+        },
+      }
+    );
+  }
+
+  // 5. If no in-memory cache exists (e.g. cold start during GitHub downtime),
+  // fall back to bundled snapshot so users never get an empty contribution calendar
+  if (fallbackCalendar && fallbackCalendar.totalContributions > 0) {
+    const fallbackPayload = {
+      configured: true,
+      calendar: fallbackCalendar,
+      source: 'bundled-fallback',
+      refreshedAt: new Date().toISOString(),
+      username: USERNAME,
+      stale: true,
+    };
+
+    return new Response(JSON.stringify(fallbackPayload), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=300, stale-if-error=86400',
+      },
+    });
+  }
+
+  // 6. Absolute catastrophic fallback (e.g. invalid build): Return 503 so CDN does NOT cache empty data
   return new Response(
     JSON.stringify({
       configured: false,
@@ -264,10 +308,10 @@ export const GET: APIRoute = async () => {
       username: USERNAME,
     }),
     {
-      status: 200,
+      status: 503,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
       },
     }
   );
